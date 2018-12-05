@@ -8,10 +8,7 @@
     "axios": "^0.18.0",
     "fuse.js": "^3.3.0",
     "react": "^16.7.0-alpha.2",
-    "react-dom": "^16.7.0-alpha.2"
-  },
-  "devDependencies": {
-    "http-proxy-middleware": "^0.19.1",
+    "react-dom": "^16.7.0-alpha.2",
     "react-scripts": "2.1.1"
   },
   "scripts": {
