@@ -19,7 +19,7 @@ const App = () => {
   const fuse = new Fuse(categories, {
     id: 'category',
     keys,
-    threshold: 0.3,
+    threshold: 0.1,
     shouldSort: true,
     includeMatches: true,
   });
