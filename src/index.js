@@ -71,22 +71,20 @@ const App = () => {
     });
   }, []);
 
-  const keyDownHandle = event => {
-    if (product && !loading) {
-      if ([78, 79].includes(event.which)) {
-        event.which === 78 ? next() : edit();
-      }
-    }
-  };
-
   useEffect(
     () => {
+      const keyDownHandle = event => {
+        if (product && !loading) {
+          if (event.which === 78) next();
+          if (event.which === 79 && result) edit();
+        }
+      };
       window.document.addEventListener('keydown', keyDownHandle);
       return () => {
         window.document.removeEventListener('keydown', keyDownHandle);
       };
     },
-    [product, loading],
+    [product, loading, result],
   );
 
   if (!codes) {
