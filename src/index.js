@@ -128,12 +128,18 @@ const App = () => {
           )
         </small>
       </h4>
-      <img
-        alt="product"
-        className="mb-2"
-        height="200px"
-        src={product.image_front_url}
-      />
+      {product.image_front_url ? (
+        <img
+          alt="product"
+          className="mb-2"
+          height="200px"
+          src={product.image_front_url}
+        />
+      ) : (
+        <span className="d-flex align-items-center" style={{ height: '200px' }}>
+          No image available
+        </span>
+      )}
       {result ? (
         <>
           <div>Match: {result.matches[0].value}</div>
