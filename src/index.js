@@ -55,7 +55,7 @@ const App = () => {
     axios(
       `https://world.openfoodfacts.org/cgi/product_jqm2.pl?code=${
         codes[step - 1] // TODO: not use - 1
-      }&user_id=${login}&password=${password}&add_category=${result.item}`,
+      }&user_id=${login}&password=${password}&add_categories=${result.item}`,
     ).then(() => {
       // TODO: display ok
       next();
