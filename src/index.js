@@ -71,6 +71,24 @@ const App = () => {
     });
   }, []);
 
+  const keyDownHandle = event => {
+    if (product && !loading) {
+      if ([78, 79].includes(event.which)) {
+        event.which === 78 ? next() : edit();
+      }
+    }
+  };
+
+  useEffect(
+    () => {
+      window.document.addEventListener('keydown', keyDownHandle);
+      return () => {
+        window.document.removeEventListener('keydown', keyDownHandle);
+      };
+    },
+    [product, loading],
+  );
+
   if (!codes) {
     return 'Loading...';
   }
@@ -156,14 +174,14 @@ const App = () => {
           disabled={loading}
           onClick={next}
         >
-          Next
+          Next (n)
         </button>
         <button
           className="btn btn-primary"
           disabled={!result || loading}
           onClick={edit}
         >
-          OK
+          OK (o)
         </button>
       </div>
     </div>
