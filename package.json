@@ -24,6 +24,6 @@
   },
   "browserslist": [
     ">1%",
-    "not ie"
+    "not ie 11"
   ]
 }
