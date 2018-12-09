@@ -7,6 +7,8 @@ import keys from './keys';
 
 axios.interceptors.response.use(res => res, console.error); // TODO: display error
 
+const options = categories.map(c => c.category).filter(c => c.startsWith('en'));
+
 const App = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
@@ -15,6 +17,7 @@ const App = () => {
   const [codes, setCodes] = useState();
   const [result, setResult] = useState();
   const [loading, setLoading] = useState(false);
+  const [option, setOption] = useState('');
 
   const fuse = new Fuse(categories, {
     id: 'category',
@@ -26,16 +29,17 @@ const App = () => {
 
   const next = () => {
     setLoading(true);
+    setOption('');
     axios(
       `https://world.openfoodfacts.org/api/v0/product/${
         codes[step]
       }.json?fields=product_name,code,categories,states_tags,image_front_url`,
     )
       .then(({ data }) => {
-        setStep(step + 1);
+        setStep((step + 1) % 20);
         setProduct(data.product);
         setResult(fuse.search(data.product.product_name)[0]);
-        // TODO: next if not result (and log debug)
+        // TODO: next if not result (and log for debug)
         if (
           !data.product.states_tags.includes('en:categories-to-be-completed')
         ) {
@@ -51,11 +55,12 @@ const App = () => {
     next();
   };
 
-  const edit = () => {
+  const edit = category => {
+    setOption('');
     axios(
       `https://world.openfoodfacts.org/cgi/product_jqm2.pl?code=${
         codes[step - 1] // TODO: not use - 1
-      }&user_id=${login}&password=${password}&add_categories=${result.item}`,
+      }&user_id=${login}&password=${password}&add_categories=${category}`,
     ).then(() => {
       // TODO: display ok
       next();
@@ -63,29 +68,18 @@ const App = () => {
   };
 
   useEffect(() => {
+    if (step !== 0) {
+      return;
+    }
     const page = Math.floor(Math.random() * 20000);
     axios(
       `https://world.openfoodfacts.org/state/categories-to-be-completed/product-name-completed/${page}.json&fields=code`,
     ).then(({ data }) => {
       setCodes(data.products.map(({ code }) => code));
     });
-  }, []);
+  }, [step]);
 
-  useEffect(
-    () => {
-      const keyDownHandle = event => {
-        if (product && !loading) {
-          if (event.which === 78) next();
-          if (event.which === 79 && result) edit();
-        }
-      };
-      window.document.addEventListener('keydown', keyDownHandle);
-      return () => {
-        window.document.removeEventListener('keydown', keyDownHandle);
-      };
-    },
-    [product, loading, result],
-  );
+
 
   if (!codes) {
     return 'Loading...';
@@ -172,15 +166,48 @@ const App = () => {
           disabled={loading}
           onClick={next}
         >
-          Next (n)
+          Next
         </button>
         <button
           className="btn btn-primary"
           disabled={!result || loading}
-          onClick={edit}
+          onClick={() => edit(result.item)}
         >
-          OK (o)
+          OK
         </button>
+      </div>
+      <div className="d-flex flex-column mt-2" style={{ width: '350px' }}>
+        <input
+          placeholder="Search a category"
+          className="form-control"
+          value={option}
+          onChange={e => setOption(e.target.value)}
+        />
+        {options.includes(option) ? (
+          <button
+            disabled={loading || !options.includes(option)}
+            onClick={() => edit(option)}
+            className="btn btn-primary mt-1"
+          >
+            Select
+          </button>
+        ) : (
+          <div className="list-group">
+            {option.length > 1 &&
+              options
+                .filter(o => o.includes(option))
+                .slice(0, 5)
+                .map(o => (
+                  <span
+                    key={o}
+                    className="list-group-item list-group-item-action"
+                    onClick={() => setOption(o)}
+                  >
+                    {o}
+                  </span>
+                ))}
+          </div>
+        )}
       </div>
     </div>
   );
