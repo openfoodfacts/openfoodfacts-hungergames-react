@@ -22,12 +22,17 @@ const App = () => {
 
   const edit = annotation => {
     setLoading(true);
-    axios.post('http://robotoff.bournhonesque.eu/api/v1/categories/annotate',
-      new URLSearchParams(`task_id=${result.task_id}&annotation=${annotation}&save=1`)
-    ).then(({ data }) => {
-      console.log(data); // TODO: display ok
-      next();
-    });
+    axios
+      .post(
+        'http://robotoff.bournhonesque.eu/api/v1/categories/annotate',
+        new URLSearchParams(
+          `task_id=${result.task_id}&annotation=${annotation}&save=1`,
+        ),
+      )
+      .then(({ data }) => {
+        console.log(data); // TODO: display ok
+        next();
+      });
   };
 
   useEffect(
@@ -50,12 +55,19 @@ const App = () => {
   useEffect(() => next(), []);
 
   if (!result) {
-    return <h4 className="mt-3 text-center">Loading...</h4>
+    return (
+      <h4 className="mt-3 text-center">
+        <p>For the moment the site is only available in http !</p>
+        Loading...
+      </h4>
+    );
   }
 
   return (
     <div className="d-flex mt-3 flex-column text-center align-items-center">
-      <h4 style={{minHeight: '3.6rem'}} className="mb-0">{result.product.product_name}</h4>
+      <h4 style={{ minHeight: '3.6rem' }} className="mb-0">
+        {result.product.product_name}
+      </h4>
       <h5>
         (
         <a
@@ -68,11 +80,7 @@ const App = () => {
         )
       </h5>
       {result.product.image_url ? (
-        <img
-          alt="product"
-          height="180px"
-          src={result.product.image_url}
-        />
+        <img alt="product" height="180px" src={result.product.image_url} />
       ) : (
         <span className="d-flex align-items-center" style={{ height: '180px' }}>
           No image available
