@@ -13,18 +13,5 @@ axios('https://static.openfoodfacts.org/data/taxonomies/categories.json')
       ),
       () => console.log('Categories updated'),
     );
-    fs.writeFile(
-      './src/keys.json',
-      JSON.stringify(
-        Array.from(
-          new Set(
-            Object.values(data)
-              .map(value => Object.keys(value.name))
-              .reduce((acc, val) => acc.concat(val), []),
-          ),
-        ),
-      ),
-      () => console.log('Keys updated'),
-    );
   })
   .catch(console.error);

@@ -8,7 +8,6 @@ Quick one component prototype
 - React 16.7-alpha (try hooks)
 - Bootstrap 4 (CSS)
 - axios (http)
-- fuse.js (fuzzy search)
 
 ## Categories:
 
@@ -17,3 +16,7 @@ Quick one component prototype
 - Change rarely
 
 So categories and all available languages are update via update-categories.js script and import in bundle
+
+## Predictions:
+
+Made by another [api](http://robotoff.bournhonesque.eu/api/v1/categories/predictions)

@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import Fuse from 'fuse.js';
-import categories from './categories';
-import keys from './keys';
 
 axios.interceptors.response.use(res => res, console.error); // TODO: display error
 
@@ -12,83 +9,61 @@ const options = categories.map(c => c.category).filter(c => c.startsWith('en'));
 const App = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
-  const [step, setStep] = useState(0);
-  const [product, setProduct] = useState();
-  const [codes, setCodes] = useState();
   const [result, setResult] = useState();
   const [loading, setLoading] = useState(false);
   const [option, setOption] = useState('');
-
-  const fuse = new Fuse(categories, {
-    id: 'category',
-    keys,
-    threshold: 0.1,
-    shouldSort: true,
-    includeMatches: true,
-  });
+  const [focused, setFocused] = useState(false);
 
   const next = () => {
     setLoading(true);
-    setOption('');
-    axios(
-      `https://world.openfoodfacts.org/api/v0/product/${
-        codes[step]
-      }.json?fields=product_name,code,categories,states_tags,image_front_url`,
-    )
+    axios('http://robotoff.bournhonesque.eu/api/v1/categories/predictions')
       .then(({ data }) => {
-        setStep((step + 1) % 20);
-        setProduct(data.product);
-        setResult(fuse.search(data.product.product_name)[0]);
-        // TODO: next if not result (and log for debug)
-        if (
-          !data.product.states_tags.includes('en:categories-to-be-completed')
-        ) {
-          // TODO: Already completed, call next
-        }
+        setResult({
+          ...data,
+          code: data.product.product_link.split('/').pop(),
+        });
       })
       .finally(() => setLoading(false));
   };
 
   const useAppCredentials = () => {
-    setLogin('HungerGameApp');
-    setPassword('HungerGameAppPassword');
+    setLogin('hungergames');
+    setPassword('happyhungergames');
     next();
   };
 
-  const edit = category => {
+  const edit = annotation => {
+    setLoading(true);
     setOption('');
-    axios(
-      `https://world.openfoodfacts.org/cgi/product_jqm2.pl?code=${
-        codes[step - 1] // TODO: not use - 1
-      }&user_id=${login}&password=${password}&add_categories=${category}`,
+    axios.post('http://robotoff.bournhonesque.eu/api/v1/categories/annotate',
+      new URLSearchParams(`task_id=${result.task_id}&annotation=${annotation}&save=1`)
     ).then(() => {
       // TODO: display ok
       next();
     });
   };
 
-  useEffect(() => {
-    if (step !== 0) {
-      return;
-    }
-    const page = Math.floor(Math.random() * 20000);
-    axios(
-      `https://world.openfoodfacts.org/state/categories-to-be-completed/product-name-completed/${page}.json&fields=code`,
-    ).then(({ data }) => {
-      setCodes(data.products.map(({ code }) => code));
-    });
-  }, [step]);
+  useEffect(
+    () => {
+      const keyDownHandle = event => {
+        if (result && !loading && !focused) {
+          if (event.which === 75) edit(-1); // k
+          if (event.which === 78) edit(0); // n
+          if (event.which === 79) edit(1); // o
+        }
+      };
+      window.document.addEventListener('keydown', keyDownHandle);
+      return () => {
+        window.document.removeEventListener('keydown', keyDownHandle);
+      };
+    },
+    [loading, result, focused],
+  );
 
-
-
-  if (!codes) {
-    return 'Loading...';
-  }
-
-  if (!product) {
+  if (!result) {
     return (
-      <div className="h-100 d-flex align-items-center justify-content-center">
-        <div style={{ width: '350px' }} className="text-center">
+      <div className="mt-5 d-flex align-items-center justify-content-center">
+        <div style={{ width: '300px' }} className="text-center">
           <h4>Please enter your credentials to enable edits</h4>
           <input
             className="mt-2 form-control"
@@ -123,73 +98,72 @@ const App = () => {
   }
 
   return (
-    <div className="h-100 d-flex flex-column align-items-center justify-content-center">
-      <h4>
-        {product.product_name || <i>No name</i>}{' '}
-        <small>
-          (
-          <a
-            rel="noopener noreferrer"
-            target="_blank"
-            href={`https://world.openfoodfacts.org/product/${product.code}`}
-          >
-            {product.code}
-          </a>
-          )
-        </small>
-      </h4>
-      {product.image_front_url ? (
+    <div className="d-flex pt-3 flex-column text-center align-items-center">
+      <h4 style={{minHeight: '3.6rem'}} className="mb-0">{result.product.product_name}</h4>
+      <h5>
+        (
+        <a
+          rel="noopener noreferrer"
+          target="_blank"
+          href={result.product.edit_product_link}
+        >
+          {result.code}
+        </a>
+        )
+      </h5>
+      {result.product.image_url ? (
         <img
           alt="product"
-          className="mb-2"
-          height="200px"
-          src={product.image_front_url}
+          height="180px"
+          src={result.product.image_url}
         />
       ) : (
-        <span className="d-flex align-items-center" style={{ height: '200px' }}>
+        <span className="d-flex align-items-center" style={{ height: '180px' }}>
           No image available
         </span>
       )}
-      {result ? (
-        <>
-          <div>Match: {result.matches[0].value}</div>
-          <h5>
-            <span className="badge badge-success">{result.item}</span>
-          </h5>
-        </>
-      ) : (
-        <div>Sorry, no result found</div>
-      )}
+      <h4 className="mt-2">Is this category right ?</h4>
+      <h5>
+        <span className="badge badge-success">{result.prediction.id}</span>
+      </h5>
       <div className="d-flex mt-2">
+        <button
+          className="btn btn-danger mr-3"
+          disabled={loading}
+          onClick={() => edit(0)}
+        >
+          No (n)
+        </button>
         <button
           className="btn btn-secondary mr-3"
           disabled={loading}
-          onClick={next}
+          onClick={() => edit(-1)}
         >
-          Next
+          Not sure (k)
         </button>
         <button
           className="btn btn-primary"
           disabled={!result || loading}
-          onClick={() => edit(result.item)}
+          onClick={() => edit(1)}
         >
-          OK
+          Yes (o)
         </button>
       </div>
-      <div className="d-flex flex-column mt-2" style={{ width: '350px' }}>
+      <div className="d-flex flex-column mt-2" style={{ width: '300px' }}>
         <input
           placeholder="Search a category"
           className="form-control"
           value={option}
           onChange={e => setOption(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
         />
         {options.includes(option) ? (
           <button
-            disabled={loading || !options.includes(option)}
-            onClick={() => edit(option)}
+            disabled
             className="btn btn-primary mt-1"
           >
-            Select
+            Select (available soon)
           </button>
         ) : (
           <div className="list-group">
