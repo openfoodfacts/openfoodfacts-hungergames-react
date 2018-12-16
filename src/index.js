@@ -10,7 +10,7 @@ const App = () => {
 
   const next = () => {
     setLoading(true);
-    axios('http://robotoff.bournhonesque.eu/api/v1/categories/predictions')
+    axios('http://robotoff.bournhonesque.eu/api/v1/categories/predictions?campaign=matcher')
       .then(({ data }) => {
         setResult({
           ...data,
