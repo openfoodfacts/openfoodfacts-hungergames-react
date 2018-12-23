@@ -8,11 +8,14 @@
     "axios": "^0.18.0",
     "react": "^16.7.0-alpha.2",
     "react-dom": "^16.7.0-alpha.2",
-    "react-scripts": "2.1.1"
+    "react-scripts": "2.1.1",
+    "webpack-cli": "^3.1.2"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "yarn build:react && yarn build:bundle",
+    "build:react": "react-scripts build",
+    "build:bundle": "webpack"
   },
   "eslintConfig": {
     "extends": "react-app"

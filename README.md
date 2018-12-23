@@ -12,3 +12,7 @@ Quick one component prototype
 ## Predictions:
 
 Made by another [api](http://robotoff.bournhonesque.eu/api/v1/categories/predictions)
+
+## Build
+
+Use a [simple webpack config](https://github.com/facebook/create-react-app/issues/3365#issuecomment-376546407) to bundle in a single file and facilitate integration in OFF main site
