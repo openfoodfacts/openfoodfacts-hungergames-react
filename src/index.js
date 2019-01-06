@@ -19,12 +19,12 @@ const App = () => {
   const next = () => {
     setLoading(true);
     axios(
-      `https://robotoff.openfoodfacts.org/api/v1/categories/predictions?campaign=matcher&country=${country}`,
+      `https://robotoff.openfoodfacts.org/api/v1/categories/predictions?campaign=matcher`,
     )
       .then(({ data }) => {
         setResult({
           ...data,
-          code: data.product.product_link.split('/').pop(),
+          code: data.product && data.product.product_link.split('/').pop(),
         });
       })
       .finally(() => setLoading(false));
@@ -50,24 +50,34 @@ const App = () => {
   };
 
   useEffect(() => {
-    const countryInput = window.document.querySelector(
-      'input[class="select2-search__field"]',
+    const countryBox = window.document.querySelector(
+      'span[class="select2-selection select2-selection--single"]',
     );
-    countryInput.addEventListener('focus', () => {
-      setInputFocused(true);
-    });
-    countryInput.addEventListener('blur', () => {
-      setInputFocused(false);
+    countryBox.addEventListener('click', () => {
+      const countryInput = window.document.querySelector(
+        'input[class="select2-search__field"]',
+      );
+      if (countryInput) {
+        countryInput.addEventListener('focus', () => {
+          setInputFocused(true);
+        });
+        countryInput.addEventListener('blur', () => {
+          setInputFocused(false);
+        });
+      }
     });
     const searchInput = window.document.querySelector(
       'input[name="search_terms"]',
     );
-    searchInput.addEventListener('focus', () => {
-      setInputFocused(true);
-    });
-    searchInput.addEventListener('blur', () => {
-      setInputFocused(false);
-    });
+    if (searchInput) {
+      // available only on large display
+      searchInput.addEventListener('focus', () => {
+        setInputFocused(true);
+      });
+      searchInput.addEventListener('blur', () => {
+        setInputFocused(false);
+      });
+    }
   }, []);
 
   useEffect(
@@ -98,6 +108,7 @@ const App = () => {
       <select
         className="countrySelect"
         value={country}
+        hidden // hide because no result when set
         onChange={e => setCountry(e.target.value)}
       >
         {Object.entries(countries).map(([id, label]) => (
@@ -106,50 +117,56 @@ const App = () => {
           </option>
         ))}
       </select>
-      <h4 className="productName">{result.product.product_name}</h4>
-      <h5>
-        (
-        <a
-          rel="noopener noreferrer"
-          target="_blank"
-          href={result.product.edit_product_link}
-        >
-          {result.code}
-        </a>
-        )
-      </h5>
-      {result.product.image_url ? (
-        <img alt="product" src={result.product.image_url} />
+      {result.product ? (
+        <>
+          <h4 className="productName">{result.product.product_name}</h4>
+          <h5>
+            (
+            <a
+              rel="noopener noreferrer"
+              target="_blank"
+              href={result.product.edit_product_link}
+            >
+              {result.code}
+            </a>
+            )
+          </h5>
+          {result.product.image_url ? (
+            <img alt="product" src={result.product.image_url} />
+          ) : (
+            <span>No image available</span>
+          )}
+          <h4 className="mt-2">Is this category right ?</h4>
+          <h5>
+            <span className="prediction">{result.prediction.id}</span>
+          </h5>
+          <div className="mt-3">
+            <button
+              className="button alert mr-3"
+              disabled={loading}
+              onClick={() => edit(0)}
+            >
+              No (n)
+            </button>
+            <button
+              className="button secondary mr-3"
+              disabled={loading}
+              onClick={() => edit(-1)}
+            >
+              Not sure (k)
+            </button>
+            <button
+              className="button success"
+              disabled={!result || loading}
+              onClick={() => edit(1)}
+            >
+              Yes (o)
+            </button>
+          </div>
+        </>
       ) : (
-        <span>No image available</span>
+        <h4>No prediction left</h4>
       )}
-      <h4 className="mt-2">Is this category right ?</h4>
-      <h5>
-        <span className="prediction">{result.prediction.id}</span>
-      </h5>
-      <div className="mt-3">
-        <button
-          className="button alert mr-3"
-          disabled={loading}
-          onClick={() => edit(0)}
-        >
-          No (n)
-        </button>
-        <button
-          className="button secondary mr-3"
-          disabled={loading}
-          onClick={() => edit(-1)}
-        >
-          Not sure (k)
-        </button>
-        <button
-          className="button success"
-          disabled={!result || loading}
-          onClick={() => edit(1)}
-        >
-          Yes (o)
-        </button>
-      </div>
     </div>
   );
 };
