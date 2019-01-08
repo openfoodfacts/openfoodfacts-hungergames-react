@@ -19,7 +19,7 @@ const App = () => {
   const next = () => {
     setLoading(true);
     axios(
-      `https://robotoff.openfoodfacts.org/api/v1/categories/predictions?campaign=matcher`,
+      `https://robotoff.openfoodfacts.org/api/v1/categories/predictions?campaign=matcher&country=${country}`,
     )
       .then(({ data }) => {
         setResult({
@@ -108,7 +108,6 @@ const App = () => {
       <select
         className="countrySelect"
         value={country}
-        hidden // hide because no result when set
         onChange={e => setCountry(e.target.value)}
       >
         {Object.entries(countries).map(([id, label]) => (
