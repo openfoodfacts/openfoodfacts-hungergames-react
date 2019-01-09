@@ -40,9 +40,9 @@ const App = () => {
     ); // To improve prediction API, no need to wait the response
     if (annotation === 1) {
       axios(
-        `https://world.openfoodfacts.org/cgi/product_jqm2.pl?code=${
-          result.code
-        }&add_categories=${result.prediction.id}`,
+        `/cgi/product_jqm2.pl?code=${result.code}&add_categories=${
+          result.prediction.id
+        }`,
       ).then(next);
     } else {
       next();
