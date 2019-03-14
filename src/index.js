@@ -19,34 +19,35 @@ const App = () => {
   const next = () => {
     setLoading(true);
     axios(
-      `https://robotoff.openfoodfacts.org/api/v1/categories/predictions?campaign=matcher&country=${country}`,
+      `https://robotoff.openfoodfacts.org/api/v1/questions/random?country=${country}&lang=fr`,
     )
       .then(({ data }) => {
-        setResult({
-          ...data,
-          code: data.product && data.product.product_link.split('/').pop(),
-        });
-      })
-      .finally(() => setLoading(false));
+        const question = data.questions[0];
+        question.productLink = `https://world.openfoodfacts.org/product/${question.barcode}`;
+        fetchProduct(question)
+      });
+  };
+
+  const fetchProduct = (question) => {
+      axios(
+          `https://world.openfoodfacts.org/api/v0/product/${question.barcode}.json?fields=product_name`,
+      ).then(({ data }) => {
+          question.product_name = data.product.product_name;
+          setResult({
+              question
+          });
+      }).finally(() => setLoading(false))
   };
 
   const edit = annotation => {
     setLoading(true);
     axios.post(
-      'https://robotoff.openfoodfacts.org/api/v1/categories/annotate',
+      'https://robotoff.openfoodfacts.org/api/v1/insights/annotate',
       new URLSearchParams(
-        `task_id=${result.task_id}&annotation=${annotation}&save=0`,
+        `insight_id=${result.question.insight_id}&annotation=${annotation}&update=1`,
       ),
     ); // To improve prediction API, no need to wait the response
-    if (annotation === 1) {
-      axios(
-        `/cgi/product_jqm2.pl?code=${result.code}&add_categories=${
-          result.prediction.id
-        }`,
-      ).then(next);
-    } else {
-      next();
-    }
+    next();
   };
 
   useEffect(() => {
@@ -116,28 +117,28 @@ const App = () => {
           </option>
         ))}
       </select>
-      {result.product ? (
+      {result.question ? (
         <>
-          <h4 className="productName">{result.product.product_name}</h4>
+          <h4 className="productName">{result.question.product_name}</h4>
           <h5>
             (
             <a
               rel="noopener noreferrer"
               target="_blank"
-              href={result.product.edit_product_link}
+              href={result.question.productLink}
             >
-              {result.code}
+              {result.question.barcode}
             </a>
             )
           </h5>
-          {result.product.image_url ? (
-            <img alt="product" src={result.product.image_url} />
+          {result.question.source_image_url ? (
+            <img alt="product" src={result.question.source_image_url} />
           ) : (
             <span>No image available</span>
           )}
-          <h4 className="mt-2">Is this category right ?</h4>
+          <h4 className="mt-2">{result.question.question}</h4>
           <h5>
-            <span className="prediction">{result.prediction.id}</span>
+            <span className="prediction">{result.question.value}</span>
           </h5>
           <div className="mt-3">
             <button
