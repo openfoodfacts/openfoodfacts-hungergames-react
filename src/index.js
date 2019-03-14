@@ -18,8 +18,9 @@ const App = () => {
 
   const next = () => {
     setLoading(true);
+    const lang = getLanguage();
     axios(
-      `https://robotoff.openfoodfacts.org/api/v1/questions/random?country=${country}&lang=fr`,
+      `https://robotoff.openfoodfacts.org/api/v1/questions/random?country=${country}&lang=${lang}`,
     )
       .then(({ data }) => {
         const question = data.questions[0];
@@ -37,6 +38,21 @@ const App = () => {
               question
           });
       }).finally(() => setLoading(false))
+  };
+
+  const getLanguage = () => {
+    let lang = 'en';
+    const match = /(\w+).openfoodfacts.org/.exec(window.location.href);
+
+    if (match !== null) {
+      const subdomain = match[1];
+
+      if (subdomain !== 'world') {
+        lang = subdomain;
+      }
+    }
+
+    return lang;
   };
 
   const edit = annotation => {
