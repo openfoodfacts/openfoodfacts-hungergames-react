@@ -11,48 +11,44 @@ axios.interceptors.response.use(res => {
 }, console.error); // TODO: display error
 
 const App = () => {
-  const [result, setResult] = useState();
+  const [result, setResult] = useState(undefined);
   const [country, setCountry] = useState('en:france');
   const [loading, setLoading] = useState(true);
   const [inputFocused, setInputFocused] = useState(false);
 
+  const lang = (() => {
+    const matches = /(\w+).openfoodfacts.org/.exec(window.location.href);
+    if (!matches) {
+      return 'en';
+    }
+    const subDomain = matches[1];
+    return subDomain === 'world' ? 'en' : subDomain;
+  })();
+
   const next = () => {
     setLoading(true);
-    const lang = getLanguage();
+    let question;
     axios(
       `https://robotoff.openfoodfacts.org/api/v1/questions/random?country=${country}&lang=${lang}`,
     )
       .then(({ data }) => {
-        const question = data.questions[0];
-        question.productLink = `https://world.openfoodfacts.org/product/${question.barcode}`;
-        fetchProduct(question)
-      });
-  };
-
-  const fetchProduct = (question) => {
-      axios(
-          `https://world.openfoodfacts.org/api/v0/product/${question.barcode}.json?fields=product_name`,
-      ).then(({ data }) => {
-          question.product_name = data.product.product_name;
-          setResult({
-              question
-          });
-      }).finally(() => setLoading(false))
-  };
-
-  const getLanguage = () => {
-    let lang = 'en';
-    const match = /(\w+).openfoodfacts.org/.exec(window.location.href);
-
-    if (match !== null) {
-      const subdomain = match[1];
-
-      if (subdomain !== 'world') {
-        lang = subdomain;
-      }
-    }
-
-    return lang;
+        question = data.questions[0];
+        question.productLink = `https://world.openfoodfacts.org/product/${
+          question.barcode
+        }`;
+        return axios(
+          `https://world.openfoodfacts.org/api/v0/product/${
+            question.barcode
+          }.json?fields=product_name`,
+        );
+      })
+      .then(({ data }) => {
+        setResult({
+          question,
+          productName: data.product.product_name,
+        });
+      })
+      .finally(() => setLoading(false));
   };
 
   const edit = annotation => {
@@ -60,9 +56,11 @@ const App = () => {
     axios.post(
       'https://robotoff.openfoodfacts.org/api/v1/insights/annotate',
       new URLSearchParams(
-        `insight_id=${result.question.insight_id}&annotation=${annotation}&update=1`,
+        `insight_id=${
+          result.question.insight_id
+        }&annotation=${annotation}&update=1`,
       ),
-    ); // To improve prediction API, no need to wait the response
+    ); // The status of the response is not displayed so no need to wait the response
     next();
   };
 
@@ -97,24 +95,21 @@ const App = () => {
     }
   }, []);
 
-  useEffect(
-    () => {
-      const keyDownHandle = event => {
-        if (result && !loading && !inputFocused) {
-          if (event.which === 75) edit(-1); // k
-          if (event.which === 78) edit(0); // n
-          if (event.which === 79) edit(1); // o
-        }
-      };
-      window.document.addEventListener('keydown', keyDownHandle);
-      return () => {
-        window.document.removeEventListener('keydown', keyDownHandle);
-      };
-    },
-    [loading, inputFocused, result],
-  );
+  useEffect(() => {
+    const keyDownHandle = event => {
+      if (result && !loading && !inputFocused) {
+        if (event.which === 75) edit(-1); // k
+        if (event.which === 78) edit(0); // n
+        if (event.which === 79) edit(1); // o
+      }
+    };
+    window.document.addEventListener('keydown', keyDownHandle);
+    return () => {
+      window.document.removeEventListener('keydown', keyDownHandle);
+    };
+  }, [loading, inputFocused, result]);
 
-  useEffect(() => next(), [country]);
+  useEffect(next, [country]);
 
   if (!result) {
     return <h4 className="mt-3 text-center">Loading...</h4>;
@@ -135,7 +130,7 @@ const App = () => {
       </select>
       {result.question ? (
         <>
-          <h4 className="productName">{result.question.product_name}</h4>
+          <h4 className="productName">{result.productName}</h4>
           <h5>
             (
             <a
