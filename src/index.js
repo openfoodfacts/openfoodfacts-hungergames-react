@@ -80,22 +80,19 @@ const App = () => {
     }
   }, []);
 
-  useEffect(
-    () => {
-      const keyDownHandle = event => {
-        if (result && !loading && !inputFocused) {
-          if (event.which === 75) edit(-1); // k
-          if (event.which === 78) edit(0); // n
-          if (event.which === 79) edit(1); // o
-        }
-      };
-      window.document.addEventListener('keydown', keyDownHandle);
-      return () => {
-        window.document.removeEventListener('keydown', keyDownHandle);
-      };
-    },
-    [loading, inputFocused, result],
-  );
+  useEffect(() => {
+    const keyDownHandle = event => {
+      if (result && !loading && !inputFocused) {
+        if (event.which === 75) edit(-1); // k
+        if (event.which === 78) edit(0); // n
+        if (event.which === 79) edit(1); // o
+      }
+    };
+    window.document.addEventListener('keydown', keyDownHandle);
+    return () => {
+      window.document.removeEventListener('keydown', keyDownHandle);
+    };
+  }, [loading, inputFocused, result]);
 
   useEffect(() => next(), [country]);
 
@@ -152,7 +149,7 @@ const App = () => {
               disabled={loading}
               onClick={() => edit(-1)}
             >
-              Not sure (k)
+              Not sure, skip (k)
             </button>
             <button
               className="button success"
