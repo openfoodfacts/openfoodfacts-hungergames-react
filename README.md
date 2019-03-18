@@ -26,3 +26,9 @@ Made by another [api](http://robotoff.bournhonesque.eu/api/v1/categories/predict
 - yarn build
 
 Use a [simple webpack config](https://github.com/facebook/create-react-app/issues/3365#issuecomment-376546407) to bundle in a single file (build/bundle.min.js) and facilitate integration in OFF main site
+
+## Countries list
+
+- yarn countries
+
+Statically generated via from static.openfoodfacts.org

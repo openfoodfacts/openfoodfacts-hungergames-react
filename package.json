@@ -5,6 +5,7 @@
   "author": "Arnaud Barré <arnaud.barre72@gmail.com>",
   "scripts": {
     "start": "react-scripts start",
+    "countries": "node update-countries.js",
     "build": "yarn build:react && yarn build:bundle",
     "build:react": "react-scripts build",
     "build:bundle": "webpack"
