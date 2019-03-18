@@ -1,21 +1,30 @@
 {
   "name": "hunger-game",
   "description": "One click categorizer for Open Food Facts",
-  "version": "0.1.0",
   "private": true,
   "author": "Arnaud Barré <arnaud.barre72@gmail.com>",
-  "dependencies": {
-    "axios": "^0.18.0",
-    "react": "^16.7.0-alpha.2",
-    "react-dom": "^16.7.0-alpha.2",
-    "react-scripts": "2.1.1",
-    "webpack-cli": "^3.1.2"
-  },
   "scripts": {
     "start": "react-scripts start",
     "build": "yarn build:react && yarn build:bundle",
     "build:react": "react-scripts build",
     "build:bundle": "webpack"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4"
+  },
+  "devDependencies": {
+    "husky": "^1.3.1",
+    "prettier": "^1.16.4",
+    "pretty-quick": "^1.10.0",
+    "react-scripts": "2.1.8",
+    "webpack-cli": "^3.3.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   },
   "eslintConfig": {
     "extends": "react-app"
