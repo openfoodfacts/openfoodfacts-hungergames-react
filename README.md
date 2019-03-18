@@ -2,12 +2,20 @@
 
 Quick one component prototype
 
+## Requirements:
+
+- [Node](https://nodejs.org)
+
+## Setup:
+
+- yarn install
+- yarn start
+
 ## Libraries:
 
-- Create React App 2 (dev/build tools)
-- React 16.7-alpha (try hooks)
+- React
 - Foundation 5 (CSS, same as on OFF main site)
-- axios (http)
+- axios (http calls)
 
 ## Predictions:
 
@@ -15,4 +23,6 @@ Made by another [api](http://robotoff.bournhonesque.eu/api/v1/categories/predict
 
 ## Build
 
-Use a [simple webpack config](https://github.com/facebook/create-react-app/issues/3365#issuecomment-376546407) to bundle in a single file and facilitate integration in OFF main site
+- yarn build
+
+Use a [simple webpack config](https://github.com/facebook/create-react-app/issues/3365#issuecomment-376546407) to bundle in a single file (build/bundle.min.js) and facilitate integration in OFF main site
