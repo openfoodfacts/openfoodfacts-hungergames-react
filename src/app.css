@@ -6,27 +6,6 @@
   margin-top: 0.5rem;
 }
 
-.productName {
-  margin-bottom: 0;
-  margin-top: 0;
-  min-height: 3.6rem;
-  line-height: 1.8rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.prediction {
-  background-color: #007095;
-  color: white;
-  padding: 2px 6px;
-  border-radius: 6px;
-}
-
-.countrySelect {
-  max-width: 300px;
-}
-
 .mr-3 {
   margin-right: 1rem;
 }

@@ -1,7 +1,5 @@
 # Hunger Game: One click categorizer for Open Food Facts
 
-Quick one component prototype
-
 ## Requirements:
 
 - [Node](https://nodejs.org)
