@@ -71,36 +71,32 @@ const App = () => {
     setQuestions(questions.filter((_, i) => i)); // remove first question
   };
 
+  // Disable keys shortcut when one of two other inputs (in OFF main header) is focused
+  const countryBox = window.document.querySelector(
+    'span[class="select2-selection select2-selection--single"]',
+  );
+  const searchInput = window.document.querySelector(
+    'input[name="search_terms"]',
+  );
   useEffect(() => {
-    const countryBox = window.document.querySelector(
-      'span[class="select2-selection select2-selection--single"]',
-    );
-    countryBox.addEventListener('click', () => {
-      const countryInput = window.document.querySelector(
-        'input[class="select2-search__field"]',
-      );
-      if (countryInput) {
-        countryInput.addEventListener('focus', () => {
-          setInputFocused(true);
-        });
-        countryInput.addEventListener('blur', () => {
-          setInputFocused(false);
-        });
-      }
-    });
-    const searchInput = window.document.querySelector(
-      'input[name="search_terms"]',
-    );
-    if (searchInput) {
-      // available only on large display
-      searchInput.addEventListener('focus', () => {
-        setInputFocused(true);
-      });
-      searchInput.addEventListener('blur', () => {
-        setInputFocused(false);
+    const setInputFocusedFalse = () => setInputFocused(false);
+    const setInputFocusedTrue = () => setInputFocused(true);
+    if (countryBox) {
+      countryBox.addEventListener('click', () => {
+        const countryInput = window.document.querySelector(
+          'input[class="select2-search__field"]',
+        );
+        if (countryInput) {
+          countryInput.addEventListener('focus', setInputFocusedTrue);
+          countryInput.addEventListener('blur', setInputFocusedFalse);
+        }
       });
     }
-  }, []);
+    if (searchInput) {
+      searchInput.addEventListener('focus', setInputFocusedTrue);
+      searchInput.addEventListener('blur', setInputFocusedFalse);
+    }
+  }, [searchInput, countryBox]);
 
   useEffect(() => {
     const keyDownHandle = event => {
