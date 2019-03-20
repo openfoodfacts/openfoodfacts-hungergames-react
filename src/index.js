@@ -11,6 +11,11 @@ axios.interceptors.response.use(res => {
   return res;
 }, console.error); // TODO: display error
 
+if (process.env.NODE_ENV === 'development') {
+  // simulate login in dev
+  document.cookie = 'session=ok';
+}
+
 const App = window.location.search.includes('type=ingredients')
   ? Ingredients
   : Questions;
