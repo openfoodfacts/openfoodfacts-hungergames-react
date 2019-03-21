@@ -18,12 +18,19 @@ const Ingredients = () => {
     const {
       data: { ingredients_text_from_image },
     } = await axios(
-      `/off/cgi/ingredients.pl?code=${code}&id=ingredients_fr&process_image=1&ocr_engine=google_cloud_vision`,
+      `${
+        process.env.REACT_APP_OFF_BASE
+      }/cgi/ingredients.pl?code=${code}&id=ingredients_fr&process_image=1&ocr_engine=google_cloud_vision`,
     );
+    if (!ingredients_text_from_image) {
+      return '';
+    }
     const {
       data: { text, corrected },
     } = await axios.post(
-      '/robotoff/api/v1/predict/ingredients/spellcheck',
+      `${
+        process.env.REACT_APP_ROBOTOFF_BASE
+      }/api/v1/predict/ingredients/spellcheck`,
       new URLSearchParams(`text=${ingredients_text_from_image}`),
     );
     return corrected || text;
@@ -34,13 +41,17 @@ const Ingredients = () => {
     const {
       data: { count, page_size },
     } = await axios(
-      '/off/state/photos-validated/state/ingredients-to-be-completed.json?fields=null',
+      `${
+        process.env.REACT_APP_OFF_BASE
+      }/state/photos-validated/state/ingredients-to-be-completed.json?fields=null`,
     ); // TODO: should be done only one times
     const randomPage = Math.floor((Math.random() * count) / page_size);
     const {
       data: { products: newProducts },
     } = await axios(
-      `/off/state/photos-validated/state/ingredients-to-be-completed/${randomPage}.json`,
+      `${
+        process.env.REACT_APP_OFF_BASE
+      }/state/photos-validated/state/ingredients-to-be-completed/${randomPage}.json`,
     );
     const ingredientsResults = await axios.all(
       // 20 parallels request will be to much
@@ -68,8 +79,10 @@ const Ingredients = () => {
   const edit = skip => {
     if (!skip) {
       axios.post(
-        `/off/cgi/product_jqm2.pl?`,
-        new URLSearchParams(`ingredients_fr_text=${ingredients}`),
+        `${process.env.REACT_APP_OFF_BASE}/cgi/product_jqm2.pl?`,
+        new URLSearchParams(
+          `ingredients_fr_text=${ingredients}&code=${products[0].code}`,
+        ),
       ); // The status of the response is not displayed so no need to wait the response
     }
     setValidateInput('');
