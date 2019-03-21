@@ -6,44 +6,76 @@ const Ingredients = () => {
     .split(';')
     .some(c => c.split('=')[0].trim() === 'session');
   if (!isLogged) {
-    return <h1>Please log in !</h1>;
+    return <h1 className="mt-3 text-center">Please log in !</h1>;
   }
 
   const [validateInput, setValidateInput] = useState('');
   const [ingredients, setIngredients] = useState('');
+  const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
 
-  const getData = async () => {
-    const {
-      data: { count, page_size },
-    } = await axios(
-      '/off/state/photos-validated/state/ingredients-to-be-completed.json?fields=null',
-    );
-    const randomPage = Math.floor((Math.random() * count) / page_size);
-    const {
-      data: { products },
-    } = await axios(
-      `/off/state/photos-validated/state/ingredients-to-be-completed/${randomPage}.json`,
-    );
-    setProducts(products);
+  const getIngredients = async code => {
     const {
       data: { ingredients_text_from_image },
     } = await axios(
-      `/off/cgi/ingredients.pl?code=${
-        products[0].code
-      }&id=ingredients_fr&process_image=1&ocr_engine=google_cloud_vision`,
+      `/off/cgi/ingredients.pl?code=${code}&id=ingredients_fr&process_image=1&ocr_engine=google_cloud_vision`,
     );
     const {
       data: { text, corrected },
     } = await axios.post(
-      `/robotoff/api/v1/predict/ingredients/spellcheck?text=${ingredients_text_from_image}`,
+      '/robotoff/api/v1/predict/ingredients/spellcheck',
+      new URLSearchParams(`text=${ingredients_text_from_image}`),
     );
-    setIngredients(corrected || text);
+    return corrected || text;
+  };
+
+  const getProducts = async () => {
+    setLoading(true);
+    const {
+      data: { count, page_size },
+    } = await axios(
+      '/off/state/photos-validated/state/ingredients-to-be-completed.json?fields=null',
+    ); // TODO: should be done only one times
+    const randomPage = Math.floor((Math.random() * count) / page_size);
+    const {
+      data: { products: newProducts },
+    } = await axios(
+      `/off/state/photos-validated/state/ingredients-to-be-completed/${randomPage}.json`,
+    );
+    const ingredientsResults = await axios.all(
+      // 20 parallels request will be to much
+      newProducts.slice(0, 5).map(p => getIngredients(p.code)),
+    );
+    if (!products.length) {
+      setIngredients(ingredientsResults[0]);
+    }
+    setProducts(
+      products.concat(
+        newProducts
+          .slice(0, 5)
+          .map((p, i) => ({ ...p, ingredients: ingredientsResults[i] })),
+      ),
+    );
+    setLoading(false);
   };
 
   useEffect(() => {
-    getData();
-  }, []);
+    if (!loading && products.length <= 2) {
+      getProducts();
+    }
+  }, [loading, products]);
+
+  const edit = skip => {
+    if (!skip) {
+      axios.post(
+        `/off/cgi/product_jqm2.pl?`,
+        new URLSearchParams(`ingredients_fr_text=${ingredients}`),
+      ); // The status of the response is not displayed so no need to wait the response
+    }
+    setValidateInput('');
+    setProducts(products.filter((_, i) => i)); // remove first product
+    setIngredients(products[0].ingredients);
+  };
 
   if (!products.length) {
     return <h4 className="mt-3 text-center">Loading...</h4>;
@@ -61,7 +93,7 @@ const Ingredients = () => {
         />
       </div>
       <div className="mt-3 d-flex-center">
-        <button className="button secondary mr-3" onClick={() => {}}>
+        <button className="button secondary mr-3" onClick={() => edit(true)}>
           Skip
         </button>
         <input
@@ -72,7 +104,7 @@ const Ingredients = () => {
         />
         <button
           className="button success ml-3"
-          onClick={() => {}}
+          onClick={() => edit(false)}
           disabled={validateInput !== 'ok'}
         >
           Edit
