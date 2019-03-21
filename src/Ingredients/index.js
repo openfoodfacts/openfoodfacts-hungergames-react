@@ -73,8 +73,9 @@ const Ingredients = () => {
       ); // The status of the response is not displayed so no need to wait the response
     }
     setValidateInput('');
-    setProducts(products.filter((_, i) => i)); // remove first product
-    setIngredients(products[0].ingredients);
+    const newProducts = products.filter((_, i) => i); // remove first product
+    setProducts(newProducts);
+    setIngredients(newProducts[0].ingredients);
   };
 
   if (!products.length) {
