@@ -9,6 +9,8 @@
 - yarn install
 - yarn start
 
+To test the ingredients parts, add `?type=ingredients` to the url
+
 ## Libraries:
 
 - React
