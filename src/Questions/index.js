@@ -19,11 +19,15 @@ const Questions = () => {
     return subDomain === 'world' ? 'en' : subDomain;
   })();
 
+  const brands = new URL(window.location.href).searchParams.get('brands');
+
   const loadQuestions = () => {
     setLoading(true);
     let questionsResults;
     axios(
-      `https://robotoff.openfoodfacts.org/api/v1/questions/random?country=${country}&lang=${lang}&count=5`,
+      `https://robotoff.openfoodfacts.org/api/v1/questions/random?country=${country}&lang=${lang}&count=5${
+        brands ? `&brands=${brands}` : ''
+      }`,
     )
       .then(({ data }) => {
         questionsResults = data.questions.map(q => ({
