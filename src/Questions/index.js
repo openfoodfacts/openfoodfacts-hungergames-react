@@ -165,7 +165,7 @@ const Questions = () => {
               No (n)
             </button>
             <button className="button secondary mr-3" onClick={() => edit(-1)}>
-              Not sure, skip (k)
+              Skip (k)
             </button>
             <button className="button success" onClick={() => edit(1)}>
               Yes (o)
