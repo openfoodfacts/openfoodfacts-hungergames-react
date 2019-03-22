@@ -30,10 +30,15 @@ const Questions = () => {
       }`,
     )
       .then(({ data }) => {
-        questionsResults = data.questions.map(q => ({
-          ...q,
-          productLink: `https://world.openfoodfacts.org/product/${q.barcode}`,
-        }));
+        questionsResults = data.questions
+          .filter(
+            ({ insight_id }) =>
+              !questions.some(q => q.insight_id === insight_id),
+          )
+          .map(q => ({
+            ...q,
+            productLink: `https://world.openfoodfacts.org/product/${q.barcode}`,
+          }));
         return axios.all(
           questionsResults.map(q =>
             axios(
