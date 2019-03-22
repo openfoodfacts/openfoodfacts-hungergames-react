@@ -1,7 +1,5 @@
 # Hunger Game: One click categorizer for Open Food Facts
 
-Quick one component prototype
-
 ## Requirements:
 
 - [Node](https://nodejs.org)
@@ -11,15 +9,17 @@ Quick one component prototype
 - yarn install
 - yarn start
 
+To test the ingredients parts, add `?type=ingredients` to the url
+
 ## Libraries:
 
 - React
 - Foundation 5 (CSS, same as on OFF main site)
 - axios (http calls)
 
-## Predictions:
+## APIs:
 
-Made by another [api](http://robotoff.bournhonesque.eu/api/v1/categories/predictions)
+OFF APIs and [Robotoff](https://github.com/openfoodfacts/robotoff)
 
 ## Build
 
