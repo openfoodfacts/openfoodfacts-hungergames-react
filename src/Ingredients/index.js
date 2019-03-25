@@ -81,7 +81,7 @@ const Ingredients = () => {
       axios.post(
         `${process.env.REACT_APP_OFF_BASE}/cgi/product_jqm2.pl?`,
         new URLSearchParams(
-          `ingredients_fr_text=${ingredients}&code=${products[0].code}`,
+          `ingredients_text_fr=${ingredients}&code=${products[0].code}`,
         ),
       ); // The status of the response is not displayed so no need to wait the response
     }
