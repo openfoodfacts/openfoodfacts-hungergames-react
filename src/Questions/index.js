@@ -4,6 +4,8 @@ import axios from 'axios';
 import countries from './countries';
 import './questions.css';
 
+const NO_QUESTION_REMAINING = 'NO_QUESTION_REMAINING';
+
 const Questions = () => {
   const [questions, setQuestions] = useState([]);
   const [country, setCountry] = useState('en:france');
@@ -52,10 +54,12 @@ const Questions = () => {
       .then(results => {
         setQuestions(
           questions.concat(
-            questionsResults.map((q, i) => ({
-              ...q,
-              productName: results[i].data.product.product_name,
-            })),
+            results.length
+              ? questionsResults.map((q, i) => ({
+                  ...q,
+                  productName: results[i].data.product.product_name,
+                }))
+              : NO_QUESTION_REMAINING,
           ),
         );
       })
@@ -103,7 +107,11 @@ const Questions = () => {
 
   useEffect(() => {
     const keyDownHandle = event => {
-      if (questions.length && !inputFocused) {
+      if (
+        questions.length &&
+        questions[0] !== NO_QUESTION_REMAINING &&
+        !inputFocused
+      ) {
         if (event.which === 75) edit(-1); // k
         if (event.which === 78) edit(0); // n
         if (event.which === 79) edit(1); // o
@@ -120,13 +128,21 @@ const Questions = () => {
   }, [country]);
 
   useEffect(() => {
-    if (!loading && questions.length <= 2) {
+    if (
+      !loading &&
+      questions.length <= 2 &&
+      !questions.includes(NO_QUESTION_REMAINING)
+    ) {
       loadQuestions();
     }
   }, [loading, questions]);
 
   if (!questions.length) {
     return <h4 className="mt-3 text-center">Loading...</h4>;
+  }
+
+  if (questions[0] === NO_QUESTION_REMAINING) {
+    return <h4 className="mt-3 text-center">No questions remaining</h4>;
   }
 
   return (
