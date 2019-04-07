@@ -18,3 +18,8 @@
 .countrySelect {
   max-width: 300px;
 }
+
+.noImageAvailable {
+  color: chocolate;
+  margin: 20px 0;
+}

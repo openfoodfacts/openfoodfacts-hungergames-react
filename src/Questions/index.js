@@ -175,7 +175,7 @@ const Questions = () => {
           {questions[0].source_image_url ? (
             <img alt="product" src={questions[0].source_image_url} />
           ) : (
-            <span>No image available</span>
+            <div className="noImageAvailable">No image available</div>
           )}
           <h4 className="mt-2">{questions[0].question}</h4>
           <h5>
