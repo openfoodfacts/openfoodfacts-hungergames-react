@@ -17,6 +17,7 @@
 
 .countrySelect {
   max-width: 300px;
+  margin-bottom: 0;
 }
 
 .noImageAvailable {

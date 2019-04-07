@@ -160,18 +160,15 @@ const Questions = () => {
       </select>
       {questions[0] ? (
         <>
-          <h4 className="productName">{questions[0].productName}</h4>
-          <h5>
-            (
+          <h4 className="productName">
             <a
               rel="noopener noreferrer"
               target="_blank"
               href={questions[0].productLink}
             >
-              {questions[0].barcode}
+              {questions[0].productName}
             </a>
-            )
-          </h5>
+          </h4>
           {questions[0].source_image_url ? (
             <img alt="product" src={questions[0].source_image_url} />
           ) : (
