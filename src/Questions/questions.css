@@ -45,15 +45,12 @@
   background-color: #00709581;
 }
 
-.unselected:hover {
+.unselected:hover,
+.unselected:focus {
   background-color: #00709593;
 }
 
-.selected:hover {
+.selected:hover,
+.selected:focus {
   background-color: #007095e8;
-}
-
-.selected:focus,
-.unselected:focus {
-  background-color: none;
 }
