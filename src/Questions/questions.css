@@ -24,3 +24,36 @@
   color: chocolate;
   margin: 20px 0;
 }
+
+.selectQuestion {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.selectQuestion button {
+  margin: 1px 0;
+  border: solid 1px #e0effc;
+  padding: 5px;
+  width: 100%;
+}
+
+.selected {
+  background-color: #007095;
+}
+
+.unselected {
+  background-color: #00709581;
+}
+
+.unselected:hover {
+  background-color: #00709593;
+}
+
+.selected:hover {
+  background-color: #007095e8;
+}
+
+.selected:focus,
+.unselected:focus {
+  background-color: none;
+}

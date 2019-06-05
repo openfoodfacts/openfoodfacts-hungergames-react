@@ -4,6 +4,11 @@ import axios from 'axios';
 import countries from './countries';
 import './questions.css';
 
+const toogleSelection = (listeOfObject, id) =>
+  listeOfObject.map(object =>
+    object.id === id ? { ...object, selected: !object.selected } : object,
+  );
+
 const NO_QUESTION_REMAINING = 'NO_QUESTION_REMAINING';
 
 const Questions = () => {
@@ -11,6 +16,28 @@ const Questions = () => {
   const [country, setCountry] = useState('en:france');
   const [loading, setLoading] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
+  const [insightTypes, setInsightTypes] = useState([
+    {
+      id: 'label',
+      question: 'Does the product have this label?',
+      selected: true,
+    },
+    {
+      id: 'category',
+      question: 'Does the product belong to this category?',
+      selected: true,
+    },
+    {
+      id: 'brand',
+      question: 'Does the product belong to this brand?',
+      selected: true,
+    },
+    {
+      id: 'product_weight',
+      question: 'Does this weight match the weight displayed on the product?',
+      selected: true,
+    },
+  ]);
 
   const lang = (() => {
     const matches = /(\w+).openfoodfacts.org/.exec(window.location.href);
@@ -29,6 +56,15 @@ const Questions = () => {
     axios(
       `https://robotoff.openfoodfacts.org/api/v1/questions/random?country=${country}&lang=${lang}&count=5${
         brands ? `&brands=${brands}` : ''
+      }${
+        ![0, 4].includes(
+          insightTypes.filter(insightType => insightType.selected).length,
+        )
+          ? `&insight_types=${insightTypes
+              .filter(insightType => insightType.selected)
+              .map(insightType => insightType.id)
+              .join(',')}`
+          : ''
       }`,
     )
       .then(({ data }) => {
@@ -158,6 +194,20 @@ const Questions = () => {
           </option>
         ))}
       </select>
+
+      <div className="selectQuestion">
+        {insightTypes.map(insightType => (
+          <button
+            className={insightType.selected ? 'selected' : 'unselected'}
+            onClick={() => {
+              setInsightTypes(toogleSelection(insightTypes, insightType.id));
+            }}
+          >
+            {insightType.question}
+          </button>
+        ))}
+      </div>
+
       {questions[0] ? (
         <>
           <h4 className="productName">
