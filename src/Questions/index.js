@@ -12,14 +12,17 @@ const Questions = () => {
   const [loading, setLoading] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
 
-  const lang = (() => {
-    const matches = /(\w+).openfoodfacts.org/.exec(window.location.href);
+  const subDomain = (() => {
+    const matches = /^https:\/\/(\w+).openfoodfacts.org/.exec(
+      window.location.href,
+    );
     if (!matches) {
-      return 'en';
+      return 'world';
     }
-    const subDomain = matches[1];
-    return subDomain === 'world' ? 'en' : subDomain;
+    return matches[1];
   })();
+
+  const lang = subDomain === 'world' ? 'en' : subDomain;
 
   const brands = new URL(window.location.href).searchParams.get('brands');
 
@@ -39,12 +42,14 @@ const Questions = () => {
           )
           .map(q => ({
             ...q,
-            productLink: `https://world.openfoodfacts.org/product/${q.barcode}`,
+            productLink: `https://${subDomain}.openfoodfacts.org/product/${
+              q.barcode
+            }`,
           }));
         return axios.all(
           questionsResults.map(q =>
             axios(
-              `https://world.openfoodfacts.org/api/v0/product/${
+              `https://${subDomain}.openfoodfacts.org/api/v0/product/${
                 q.barcode
               }.json?fields=product_name`,
             ),
