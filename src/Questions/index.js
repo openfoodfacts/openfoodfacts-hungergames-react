@@ -4,7 +4,7 @@ import axios from 'axios';
 import countries from './countries';
 import './questions.css';
 
-const toogleSelection = (listeOfObject, id) =>
+const tooggleSelection = (listeOfObject, id) =>
   listeOfObject.map(object =>
     object.id === id ? { ...object, selected: !object.selected } : object,
   );
@@ -200,7 +200,7 @@ const Questions = () => {
           <button
             className={insightType.selected ? 'selected' : 'unselected'}
             onClick={() => {
-              setInsightTypes(toogleSelection(insightTypes, insightType.id));
+              setInsightTypes(tooggleSelection(insightTypes, insightType.id));
             }}
           >
             {insightType.question}
