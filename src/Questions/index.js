@@ -8,9 +8,6 @@ const NO_QUESTION_REMAINING = 'NO_QUESTION_REMAINING';
 
 const Questions = () => {
   const [questions, setQuestions] = useState([]);
-  const [country, setCountry] = useState('en:world');
-  const [loading, setLoading] = useState(false);
-  const [inputFocused, setInputFocused] = useState(false);
 
   const subDomain = (() => {
     const matches = /^https:\/\/((world|\w{2})(?:-(\w{2}))?)\.openfoodfacts\.org/.exec(
@@ -31,6 +28,15 @@ const Questions = () => {
     const lc = country === undefined ? 'en' : country.lc;
     return { subDomain: matches[1], cc: cc, lc: lc };
   })();
+
+  const [country, setCountry] = useState(
+    countries.find(
+      country =>
+        country.cc !== undefined && country.cc.toLowerCase() === subDomain.cc,
+    ).id,
+  );
+  const [loading, setLoading] = useState(false);
+  const [inputFocused, setInputFocused] = useState(false);
 
   const brands = new URL(window.location.href).searchParams.get('brands');
 
