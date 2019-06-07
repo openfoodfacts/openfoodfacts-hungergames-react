@@ -8,7 +8,7 @@ const NO_QUESTION_REMAINING = 'NO_QUESTION_REMAINING';
 
 const Questions = () => {
   const [questions, setQuestions] = useState([]);
-  const [country, setCountry] = useState('en:france');
+  const [country, setCountry] = useState('en:world');
   const [loading, setLoading] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
 
@@ -30,9 +30,9 @@ const Questions = () => {
     setLoading(true);
     let questionsResults;
     axios(
-      `https://robotoff.openfoodfacts.org/api/v1/questions/random?country=${country}&lang=${lang}&count=5${
-        brands ? `&brands=${brands}` : ''
-      }`,
+      `https://robotoff.openfoodfacts.org/api/v1/questions/random?${
+        country === 'en:world' ? '' : `country=${country}`
+      }&lang=${lang}&count=5${brands ? `&brands=${brands}` : ''}`,
     )
       .then(({ data }) => {
         questionsResults = data.questions
@@ -157,9 +157,9 @@ const Questions = () => {
         value={country}
         onChange={e => setCountry(e.target.value)}
       >
-        {Object.entries(countries).map(([id, label]) => (
-          <option key={id} value={id}>
-            {label}
+        {Object.entries(countries).map(([_, value]) => (
+          <option key={value.id} value={value.id}>
+            {value.label}
           </option>
         ))}
       </select>
