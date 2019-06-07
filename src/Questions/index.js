@@ -13,16 +13,24 @@ const Questions = () => {
   const [inputFocused, setInputFocused] = useState(false);
 
   const subDomain = (() => {
-    const matches = /^https:\/\/(\w+).openfoodfacts.org/.exec(
+    const matches = /^https:\/\/((world|\w{2})(?:-(\w{2}))?)\.openfoodfacts\.org/.exec(
       window.location.href,
     );
     if (!matches) {
-      return 'world';
+      return { subDomain: 'world', cc: 'world', lc: 'en' };
     }
-    return matches[1];
-  })();
 
-  const lang = subDomain === 'world' ? 'en' : subDomain;
+    const cc = matches[2].toLowerCase();
+    if (matches[3]) {
+      return { subDomain: matches[1], cc: cc, lc: matches[3] };
+    }
+
+    const country = countries.find(
+      country => country.cc !== undefined && country.cc.toLowerCase() === cc,
+    );
+    const lc = country === undefined ? 'en' : country.lc;
+    return { subDomain: matches[1], cc: cc, lc: lc };
+  })();
 
   const brands = new URL(window.location.href).searchParams.get('brands');
 
@@ -32,7 +40,7 @@ const Questions = () => {
     axios(
       `https://robotoff.openfoodfacts.org/api/v1/questions/random?${
         country === 'en:world' ? '' : `country=${country}`
-      }&lang=${lang}&count=5${brands ? `&brands=${brands}` : ''}`,
+      }&lang=${subDomain.lc}&count=5${brands ? `&brands=${brands}` : ''}`,
     )
       .then(({ data }) => {
         questionsResults = data.questions
@@ -42,14 +50,16 @@ const Questions = () => {
           )
           .map(q => ({
             ...q,
-            productLink: `https://${subDomain}.openfoodfacts.org/product/${
-              q.barcode
-            }`,
+            productLink: `https://${
+              subDomain.subDomain
+            }.openfoodfacts.org/product/${q.barcode}`,
           }));
         return axios.all(
           questionsResults.map(q =>
             axios(
-              `https://${subDomain}.openfoodfacts.org/api/v0/product/${
+              `https://${
+                subDomain.subDomain
+              }.openfoodfacts.org/api/v0/product/${
                 q.barcode
               }.json?fields=product_name`,
             ),
