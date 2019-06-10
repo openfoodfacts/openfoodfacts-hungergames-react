@@ -186,9 +186,9 @@ const Questions = () => {
         value={country}
         onChange={e => setCountry(e.target.value)}
       >
-        {Object.entries(countries).map(([_, value]) => (
-          <option key={value.id} value={value.id}>
-            {value.label}
+        {countries.map(country => (
+          <option key={country.id} value={country.id}>
+            {country.label}
           </option>
         ))}
       </select>
