@@ -14,25 +14,36 @@ const Questions = () => {
       window.location.href,
     );
     if (!matches) {
-      return { subDomain: 'world', cc: 'world', lc: 'en' };
+      return { subDomain: 'world', countryCode: 'world', languageCode: 'en' };
     }
 
-    const cc = matches[2].toLowerCase();
+    const countryCode = matches[2].toLowerCase();
     if (matches[3]) {
-      return { subDomain: matches[1], cc: cc, lc: matches[3] };
+      return {
+        subDomain: matches[1],
+        countryCode: countryCode,
+        languageCode: matches[3],
+      };
     }
 
     const country = countries.find(
-      country => country.cc !== undefined && country.cc.toLowerCase() === cc,
+      country =>
+        country.countryCode !== undefined &&
+        country.countryCode.toLowerCase() === countryCode,
     );
-    const lc = country === undefined ? 'en' : country.lc;
-    return { subDomain: matches[1], cc: cc, lc: lc };
+    const languageCode = country === undefined ? 'en' : country.languageCode;
+    return {
+      subDomain: matches[1],
+      countryCode: countryCode,
+      languageCode: languageCode,
+    };
   })();
 
   const [country, setCountry] = useState(
     countries.find(
       country =>
-        country.cc !== undefined && country.cc.toLowerCase() === subDomain.cc,
+        country.countryCode !== undefined &&
+        country.countryCode.toLowerCase() === subDomain.countryCode,
     ).id,
   );
   const [loading, setLoading] = useState(false);
@@ -46,7 +57,9 @@ const Questions = () => {
     axios(
       `https://robotoff.openfoodfacts.org/api/v1/questions/random?${
         country === 'en:world' ? '' : `country=${country}`
-      }&lang=${subDomain.lc}&count=5${brands ? `&brands=${brands}` : ''}`,
+      }&lang=${subDomain.languageCode}&count=5${
+        brands ? `&brands=${brands}` : ''
+      }`,
     )
       .then(({ data }) => {
         questionsResults = data.questions
