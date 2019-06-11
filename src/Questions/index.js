@@ -6,20 +6,47 @@ import './questions.css';
 
 const NO_QUESTION_REMAINING = 'NO_QUESTION_REMAINING';
 
+const subDomain = (() => {
+  const matches = /^https:\/\/((world|\w{2})(?:-(\w{2}))?)\.openfoodfacts\.org/.exec(
+    window.location.href,
+  );
+  if (!matches) {
+    return { subDomain: 'world', countryCode: 'world', languageCode: 'en' };
+  }
+
+  const countryCode = matches[2].toLowerCase();
+  if (matches[3]) {
+    return {
+      subDomain: matches[1],
+      countryCode: countryCode,
+      languageCode: matches[3],
+    };
+  }
+
+  const country = countries.find(
+    country =>
+      country.countryCode !== undefined &&
+      country.countryCode.toLowerCase() === countryCode,
+  );
+  const languageCode = country === undefined ? 'en' : country.languageCode;
+  return {
+    subDomain: matches[1],
+    countryCode: countryCode,
+    languageCode: languageCode,
+  };
+})();
+
 const Questions = () => {
   const [questions, setQuestions] = useState([]);
-  const [country, setCountry] = useState('en:france');
+  const [country, setCountry] = useState(
+    countries.find(
+      country =>
+        country.countryCode !== undefined &&
+        country.countryCode.toLowerCase() === subDomain.countryCode,
+    ).id,
+  );
   const [loading, setLoading] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
-
-  const lang = (() => {
-    const matches = /(\w+).openfoodfacts.org/.exec(window.location.href);
-    if (!matches) {
-      return 'en';
-    }
-    const subDomain = matches[1];
-    return subDomain === 'world' ? 'en' : subDomain;
-  })();
 
   const brands = new URL(window.location.href).searchParams.get('brands');
 
@@ -27,7 +54,9 @@ const Questions = () => {
     setLoading(true);
     let questionsResults;
     axios(
-      `https://robotoff.openfoodfacts.org/api/v1/questions/random?country=${country}&lang=${lang}&count=5${
+      `https://robotoff.openfoodfacts.org/api/v1/questions/random?${
+        country === 'en:world' ? '' : `country=${country}`
+      }&lang=${subDomain.languageCode}&count=5${
         brands ? `&brands=${brands}` : ''
       }`,
     )
@@ -39,12 +68,16 @@ const Questions = () => {
           )
           .map(q => ({
             ...q,
-            productLink: `https://world.openfoodfacts.org/product/${q.barcode}`,
+            productLink: `https://${
+              subDomain.subDomain
+            }.openfoodfacts.org/product/${q.barcode}`,
           }));
         return axios.all(
           questionsResults.map(q =>
             axios(
-              `https://world.openfoodfacts.org/api/v0/product/${
+              `https://${
+                subDomain.subDomain
+              }.openfoodfacts.org/api/v0/product/${
                 q.barcode
               }.json?fields=product_name`,
             ),
@@ -152,9 +185,9 @@ const Questions = () => {
         value={country}
         onChange={e => setCountry(e.target.value)}
       >
-        {Object.entries(countries).map(([id, label]) => (
-          <option key={id} value={id}>
-            {label}
+        {countries.map(country => (
+          <option key={country.id} value={country.id}>
+            {country.label}
           </option>
         ))}
       </select>
