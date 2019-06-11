@@ -7,7 +7,6 @@ import './questions.css';
 const NO_QUESTION_REMAINING = 'NO_QUESTION_REMAINING';
 
 const subDomain = (() => {
-  console.log(window.location.href);
   const matches = /^https:\/\/((world|\w{2})(?:-(\w{2}))?)\.openfoodfacts\.org/.exec(
     window.location.href,
   );
