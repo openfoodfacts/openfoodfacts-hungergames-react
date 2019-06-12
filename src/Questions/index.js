@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import countries from './countries';
+import insightTypes from './insightTypes';
 import './questions.css';
 
-const tooggleSelection = (listeOfObject, id) =>
-  listeOfObject.map(object =>
-    object.id === id ? { ...object, selected: !object.selected } : object,
-  );
+const tooggleSelection = (selectedInsights, insightType) =>
+  selectedInsights.includes(insightType)
+    ? selectedInsights.filter(insight => insight !== insightType)
+    : [...selectedInsights, insightType];
 
 const NO_QUESTION_REMAINING = 'NO_QUESTION_REMAINING';
 
@@ -16,29 +17,10 @@ const Questions = () => {
   const [country, setCountry] = useState('en:france');
   const [loading, setLoading] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
-  const [insightTypes, setInsightTypes] = useState([
-    {
-      id: 'label',
-      question: 'Does the product have this label?',
-      selected: true,
-    },
-    {
-      id: 'category',
-      question: 'Does the product belong to this category?',
-      selected: true,
-    },
-    {
-      id: 'brand',
-      question: 'Does the product belong to this brand?',
-      selected: true,
-    },
-    {
-      id: 'product_weight',
-      question: 'Does this weight match the weight displayed on the product?',
-      selected: true,
-    },
-  ]);
-  
+  const [selectedInsights, setSelectedInsights] = useState(
+    Object.keys(insightTypes),
+  );
+
   const lang = (() => {
     const matches = /(\w+).openfoodfacts.org/.exec(window.location.href);
     if (!matches) {
@@ -57,13 +39,8 @@ const Questions = () => {
       `https://robotoff.openfoodfacts.org/api/v1/questions/random?country=${country}&lang=${lang}&count=5${
         brands ? `&brands=${brands}` : ''
       }${
-        ![0, 4].includes(
-          insightTypes.filter(insightType => insightType.selected).length,
-        )
-          ? `&insight_types=${insightTypes
-              .filter(insightType => insightType.selected)
-              .map(insightType => insightType.id)
-              .join(',')}`
+        ![0, 4].includes(selectedInsights.length)
+          ? `&insight_types=${selectedInsights.join(',')}`
           : ''
       }`,
     )
@@ -196,14 +173,18 @@ const Questions = () => {
       </select>
 
       <div className="selectQuestion">
-        {insightTypes.map(insightType => (
+        {Object.keys(insightTypes).map(insightType => (
           <button
-            className={insightType.selected ? 'selected' : 'unselected'}
+            className={
+              selectedInsights.includes(insightType) ? 'selected' : 'unselected'
+            }
             onClick={() => {
-              setInsightTypes(tooggleSelection(insightTypes, insightType.id));
+              setSelectedInsights(
+                tooggleSelection(selectedInsights, insightType),
+              );
             }}
           >
-            {insightType.question}
+            {insightTypes[insightType]}
           </button>
         ))}
       </div>
