@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import countries from './countries';
+import insightTypes from './insightTypes';
 import './questions.css';
+
+const tooggleSelection = (selectedInsights, insightType) =>
+  selectedInsights.includes(insightType)
+    ? selectedInsights.filter(insight => insight !== insightType)
+    : [...selectedInsights, insightType];
 
 const NO_QUESTION_REMAINING = 'NO_QUESTION_REMAINING';
 
@@ -47,6 +53,9 @@ const Questions = () => {
   );
   const [loading, setLoading] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
+  const [selectedInsights, setSelectedInsights] = useState(
+    Object.keys(insightTypes),
+  );
 
   const brands = new URL(window.location.href).searchParams.get('brands');
 
@@ -58,6 +67,10 @@ const Questions = () => {
         country === 'en:world' ? '' : `country=${country}`
       }&lang=${subDomain.languageCode}&count=5${
         brands ? `&brands=${brands}` : ''
+      }${
+        ![0, 4].includes(selectedInsights.length)
+          ? `&insight_types=${selectedInsights.join(',')}`
+          : ''
       }`,
     )
       .then(({ data }) => {
@@ -191,6 +204,24 @@ const Questions = () => {
           </option>
         ))}
       </select>
+
+      <div className="selectQuestion">
+        {Object.keys(insightTypes).map(insightType => (
+          <button
+            className={
+              selectedInsights.includes(insightType) ? 'selected' : 'unselected'
+            }
+            onClick={() => {
+              setSelectedInsights(
+                tooggleSelection(selectedInsights, insightType),
+              );
+            }}
+          >
+            {insightTypes[insightType]}
+          </button>
+        ))}
+      </div>
+
       {questions[0] ? (
         <>
           <h4 className="productName">
