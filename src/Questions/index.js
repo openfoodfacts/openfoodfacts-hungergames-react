@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import ImageZoom from 'react-medium-image-zoom';
 
 import countries from './countries';
 import insightTypes from './insightTypes';
@@ -234,7 +235,22 @@ const Questions = () => {
             </a>
           </h4>
           {questions[0].source_image_url ? (
-            <img alt="product" src={questions[0].source_image_url} />
+            <ImageZoom
+              image={{
+                src: questions[0].source_image_url,
+                alt: 'small product picture',
+              }}
+              zoomImage={{
+                src: questions[0].source_image_url.match(/\/\d+\.400\.jpg$/i)
+                  ? questions[0].source_image_url.replace('.400.jpg', '.jpg')
+                  : questions[0].source_image_url.replace(
+                      '.400.jpg',
+                      '.full.jpg',
+                    ),
+                alt: 'full product picture',
+              }}
+              shouldReplaceImage={false}
+            />
           ) : (
             <div className="noImageAvailable">No image available</div>
           )}
