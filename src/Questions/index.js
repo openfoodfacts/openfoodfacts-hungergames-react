@@ -55,7 +55,9 @@ const Questions = () => {
 
   const tooggleSelectedInsight = insightType => {
     const newSelectedInsights = selectedInsights.includes(insightType)
-      ? selectedInsights.filter(insight => insight !== insightType)
+      ? selectedInsights.length > 1
+        ? selectedInsights.filter(insight => insight !== insightType)
+        : selectedInsights
       : [...selectedInsights, insightType];
 
     setSelectedInsights(newSelectedInsights);
