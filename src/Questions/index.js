@@ -6,11 +6,6 @@ import countries from './countries';
 import insightTypes from './insightTypes';
 import './questions.css';
 
-const tooggleSelection = (selectedInsights, insightType) =>
-  selectedInsights.includes(insightType)
-    ? selectedInsights.filter(insight => insight !== insightType)
-    : [...selectedInsights, insightType];
-
 const NO_QUESTION_REMAINING = 'NO_QUESTION_REMAINING';
 
 const subDomain = (() => {
@@ -57,6 +52,20 @@ const Questions = () => {
   const [selectedInsights, setSelectedInsights] = useState(
     Object.keys(insightTypes),
   );
+
+  const tooggleSelectedInsight = insightType => {
+    const newSelectedInsights = selectedInsights.includes(insightType)
+      ? selectedInsights.filter(insight => insight !== insightType)
+      : [...selectedInsights, insightType];
+
+    setSelectedInsights(newSelectedInsights);
+
+    setQuestions(
+      questions.filter(question =>
+        newSelectedInsights.includes(question.insight_type),
+      ),
+    );
+  };
 
   const brands = new URL(window.location.href).searchParams.get('brands');
 
@@ -213,9 +222,7 @@ const Questions = () => {
               selectedInsights.includes(insightType) ? 'selected' : 'unselected'
             }
             onClick={() => {
-              setSelectedInsights(
-                tooggleSelection(selectedInsights, insightType),
-              );
+              tooggleSelectedInsight(insightType);
             }}
           >
             {insightTypes[insightType]}
