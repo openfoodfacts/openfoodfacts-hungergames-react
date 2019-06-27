@@ -6,11 +6,6 @@ import countries from './countries';
 import insightTypes from './insightTypes';
 import './questions.css';
 
-const tooggleSelection = (selectedInsights, insightType) =>
-  selectedInsights.includes(insightType)
-    ? selectedInsights.filter(insight => insight !== insightType)
-    : [...selectedInsights, insightType];
-
 const NO_QUESTION_REMAINING = 'NO_QUESTION_REMAINING';
 
 const subDomain = (() => {
@@ -58,6 +53,22 @@ const Questions = () => {
     Object.keys(insightTypes),
   );
 
+  const tooggleSelectedInsight = insightType => {
+    const newSelectedInsights = selectedInsights.includes(insightType)
+      ? selectedInsights.length > 1
+        ? selectedInsights.filter(insight => insight !== insightType)
+        : selectedInsights
+      : [...selectedInsights, insightType];
+
+    setSelectedInsights(newSelectedInsights);
+
+    setQuestions(
+      questions.filter(question =>
+        newSelectedInsights.includes(question.insight_type),
+      ),
+    );
+  };
+
   const brands = new URL(window.location.href).searchParams.get('brands');
 
   const loadQuestions = () => {
@@ -68,11 +79,7 @@ const Questions = () => {
         country === 'en:world' ? '' : `country=${country}`
       }&lang=${subDomain.languageCode}&count=5${
         brands ? `&brands=${brands}` : ''
-      }${
-        ![0, 4].includes(selectedInsights.length)
-          ? `&insight_types=${selectedInsights.join(',')}`
-          : ''
-      }`,
+      }${`&insight_types=${selectedInsights.join(',')}`}`,
     )
       .then(({ data }) => {
         questionsResults = data.questions
@@ -213,9 +220,7 @@ const Questions = () => {
               selectedInsights.includes(insightType) ? 'selected' : 'unselected'
             }
             onClick={() => {
-              setSelectedInsights(
-                tooggleSelection(selectedInsights, insightType),
-              );
+              tooggleSelectedInsight(insightType);
             }}
           >
             {insightTypes[insightType]}
