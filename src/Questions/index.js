@@ -79,11 +79,7 @@ const Questions = () => {
         country === 'en:world' ? '' : `country=${country}`
       }&lang=${subDomain.languageCode}&count=5${
         brands ? `&brands=${brands}` : ''
-      }${
-        ![0, 4].includes(selectedInsights.length)
-          ? `&insight_types=${selectedInsights.join(',')}`
-          : ''
-      }`,
+      }${`&insight_types=${selectedInsights.join(',')}`}`,
     )
       .then(({ data }) => {
         questionsResults = data.questions
