@@ -121,15 +121,16 @@ const Questions = () => {
   };
 
   const edit = annotation => {
+    const answered_question = questions[0];
+    setQuestions(questions.filter(question => question !== answered_question));
     axios.post(
       'https://robotoff.openfoodfacts.org/api/v1/insights/annotate',
       new URLSearchParams(
         `insight_id=${
-          questions[0].insight_id
+          answered_question.insight_id
         }&annotation=${annotation}&update=1`,
       ),
     ); // The status of the response is not displayed so no need to wait the response
-    setQuestions(questions.filter((_, i) => i)); // remove first question
   };
 
   // Disable keys shortcut when one of two other inputs (in OFF main header) is focused
