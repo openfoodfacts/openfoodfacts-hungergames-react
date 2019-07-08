@@ -195,10 +195,6 @@ const Questions = () => {
     return <h4 className="mt-3 text-center">Loading...</h4>;
   }
 
-  if (questions[0] === NO_QUESTION_REMAINING) {
-    return <h4 className="mt-3 text-center">No questions remaining</h4>;
-  }
-
   return (
     <div className="mt-3 text-center">
       <select
@@ -228,7 +224,7 @@ const Questions = () => {
         ))}
       </div>
 
-      {questions[0] ? (
+      {questions[0] && questions[0] !== NO_QUESTION_REMAINING ? (
         <>
           <h4 className="productName">
             <a
@@ -276,7 +272,7 @@ const Questions = () => {
           </div>
         </>
       ) : (
-        <h4>No questions left</h4>
+        <h4 className="mt-3 text-center">No questions remaining</h4>
       )}
     </div>
   );
