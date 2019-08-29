@@ -25,10 +25,11 @@ const useNumberOfPages = () => {
 
 const useGetProduct = nbOfPages => {
   const [productsBacklog, setProductsBacklog] = useState([]);
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (nbOfPages >= 0 && productsBacklog.length < 6) {
       const AddProducts = async () => {
+        setLoading(true);
         const randomPage = Math.floor(Math.random() * nbOfPages);
         let {
           data: { products },
@@ -37,6 +38,7 @@ const useGetProduct = nbOfPages => {
             process.env.REACT_APP_OFF_BASE
           }/state/photos-validated/state/nutrition-facts-to-be-completed/${randomPage}.json?fields=code,lang,image_nutrition_url`,
         );
+        setLoading(false);
         products = products.map(product => {
           return {
             code: product.code,
@@ -50,19 +52,21 @@ const useGetProduct = nbOfPages => {
     }
   }, [nbOfPages, productsBacklog]);
 
-  return [productsBacklog, setProductsBacklog];
+  return [loading, productsBacklog, setProductsBacklog];
 };
 
 const NutritionValues = () => {
   const nbOfPages = useNumberOfPages();
-  const [products, setProducts] = useGetProduct(nbOfPages);
+  const [loadingProducts, products, setProducts] = useGetProduct(nbOfPages);
 
   if (nbOfPages < 0) {
     return <p>Connextion to the API</p>;
   }
-
-  if (products.length === 0) {
+  if (loadingProducts) {
     return <p>Loading Products</p>;
+  }
+  if (products.length === 0) {
+    return <p>No Product found</p>;
   }
 
   return (
