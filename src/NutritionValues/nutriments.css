@@ -1,0 +1,33 @@
+.root {
+  text-align: center;
+}
+
+.fields {
+  margin-top: 20px;
+  max-width: 500px;
+}
+
+ul {
+  list-style-type: none;
+  margin: auto;
+}
+.fields li * {
+  display: inline-block;
+  margin-right: 5%;
+}
+.fields li button {
+  padding: 5px;
+}
+
+.fields .nutrition-label {
+  width: 30%;
+}
+.fields .nutrition-input {
+  width: 20%;
+}
+.fields .nutrition-validation {
+  width: 15%;
+}
+.fields .nutrition-deletion {
+  width: 15%;
+}

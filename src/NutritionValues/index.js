@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import nutriments from './nutriments';
+import './nutriments.css';
 
 const useNumberOfPages = () => {
   const [nbOfPages, setNbOfPages] = useState(-1);
@@ -64,16 +66,26 @@ const NutritionValues = () => {
   }
 
   return (
-    <>
+    <div className="root">
       <img src={products[0].imageUrl} alt="product" />
+      <ul className="fields">
+        {Object.keys(nutriments).map(nutrimentName => (
+          <li key={nutrimentName}>
+            <p className="nutrition-label">{nutrimentName}</p>
+            <input type="number" className="nutrition-input" />
+            <button className="nutrition-validation">validate</button>
+            <button className="nutrition-deletion">delete</button>
+          </li>
+        ))}
+      </ul>
       <button
         onClick={() => {
           setProducts(products.slice(1));
         }}
       >
-        next
+        skip
       </button>
-    </>
+    </div>
   );
 };
 
