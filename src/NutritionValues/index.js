@@ -55,11 +55,79 @@ const useGetProduct = nbOfPages => {
   return [loading, productsBacklog, setProductsBacklog];
 };
 
+const CheckEntries = ({
+  nutriments,
+  nutritionValues,
+  nutritionVisible,
+  close,
+  validate,
+}) => {
+  const toDelete = Object.keys(nutriments).filter(
+    nutrimentName => !nutritionVisible[nutrimentName],
+  );
+  const empty = Object.keys(nutriments).filter(
+    nutrimentName =>
+      nutritionVisible[nutrimentName] &&
+      !nutritionValues[nutrimentName].length > 0,
+  );
+  const filled = Object.keys(nutriments).filter(
+    nutrimentName =>
+      nutritionVisible[nutrimentName] &&
+      nutritionValues[nutrimentName].length > 0,
+  );
+  return (
+    <>
+      <ol>
+        {toDelete.length > 0 && (
+          <>
+            <li>Will be deleted</li>
+            {toDelete.map(nutrimentName => (
+              <li>{nutrimentName}</li>
+            ))}
+          </>
+        )}
+        {empty.length > 0 && (
+          <>
+            <li>You skip</li>
+            {empty.map(nutrimentName => (
+              <li>{nutrimentName}</li>
+            ))}
+          </>
+        )}
+        {filled.length > 0 && (
+          <>
+            <li>You filled</li>
+            {filled.map(nutrimentName => (
+              <li>{`${nutrimentName} : ${nutritionValues[nutrimentName]}`}</li>
+            ))}
+          </>
+        )}
+      </ol>
+      <button
+        onClick={() => {
+          validate();
+          close();
+        }}
+      >
+        Validate
+      </button>
+      <button
+        onClick={() => {
+          close();
+        }}
+      >
+        Need to modify
+      </button>
+    </>
+  );
+};
+
 const NutritionValues = () => {
   const nbOfPages = useNumberOfPages();
   const [loadingProducts, products, setProducts] = useGetProduct(nbOfPages);
   const [nutritionValues, setNutritionValues] = useState({});
   const [nutritionVisible, setNutritionVisible] = useState({});
+  const [isLastCheckOpen, setIsLastCheckOpen] = useState(false);
 
   useEffect(() => {
     const newNutritionValues = {};
@@ -98,40 +166,61 @@ const NutritionValues = () => {
   return (
     <div className="root">
       <img src={products[0].imageUrl} alt="product" />
-      <ul className="fields">
-        {Object.keys(nutriments).map(nutrimentName => (
-          <li
-            key={nutrimentName}
-            className={nutritionVisible[nutrimentName] ? 'shadow' : ''}
+      {isLastCheckOpen ? (
+        <CheckEntries
+          nutriments={nutriments}
+          nutritionValues={nutritionValues}
+          nutritionVisible={nutritionVisible}
+          close={() => {
+            setIsLastCheckOpen(false);
+          }}
+          validate={console.log('replace by API request')}
+        />
+      ) : (
+        <>
+          <ul className="fields">
+            {Object.keys(nutriments).map(nutrimentName => (
+              <li
+                key={nutrimentName}
+                className={nutritionVisible[nutrimentName] ? 'shadow' : ''}
+              >
+                <p className="nutrition-label">{nutrimentName}</p>
+                <input
+                  type="number"
+                  value={nutritionValues[nutrimentName]}
+                  className="nutrition-input"
+                  onChange={e => {
+                    setNutritionValues({
+                      ...nutritionValues,
+                      [nutrimentName]: e.target.value,
+                    });
+                  }}
+                />
+                <button
+                  className="nutrition-deletion"
+                  onClick={toogleVisibility(nutrimentName)}
+                >
+                  {nutritionVisible[nutrimentName] ? 'delete' : 'restore'}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button
+            onClick={() => {
+              setProducts(products.slice(1));
+            }}
           >
-            <p className="nutrition-label">{nutrimentName}</p>
-            <input
-              type="number"
-              value={nutritionValues[nutrimentName]}
-              className="nutrition-input"
-              onChange={e => {
-                setNutritionValues({
-                  ...nutritionValues,
-                  [nutrimentName]: e.target.value,
-                });
-              }}
-            />
-            <button
-              className="nutrition-deletion"
-              onClick={toogleVisibility(nutrimentName)}
-            >
-              {nutritionVisible[nutrimentName] ? 'delete' : 'restore'}
-            </button>
-          </li>
-        ))}
-      </ul>
-      <button
-        onClick={() => {
-          setProducts(products.slice(1));
-        }}
-      >
-        skip
-      </button>
+            skip
+          </button>
+          <button
+            onClick={() => {
+              setIsLastCheckOpen(true);
+            }}
+          >
+            Validate
+          </button>
+        </>
+      )}
     </div>
   );
 };
