@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import nutriments from './nutriments';
 import './nutriments.css';
@@ -58,6 +58,32 @@ const useGetProduct = nbOfPages => {
 const NutritionValues = () => {
   const nbOfPages = useNumberOfPages();
   const [loadingProducts, products, setProducts] = useGetProduct(nbOfPages);
+  const [nutritionValues, setNutritionValues] = useState({});
+  const [nutritionVisible, setNutritionVisible] = useState({});
+
+  useEffect(() => {
+    const newNutritionValues = {};
+    const newNutritionVisible = {};
+    Object.keys(nutriments).forEach(nutrimentName => {
+      newNutritionValues[nutrimentName] = '';
+      newNutritionVisible[nutrimentName] = true;
+    });
+
+    setNutritionValues(newNutritionValues);
+    setNutritionVisible(newNutritionVisible);
+  }, [products[0]]);
+
+  const toogleVisibility = useCallback(
+    nutrimentName => () => {
+      nutritionValues[nutrimentName] = '';
+      setNutritionValues({ ...nutritionValues, [nutrimentName]: '' });
+      setNutritionVisible({
+        ...nutritionVisible,
+        [nutrimentName]: !nutritionVisible[nutrimentName],
+      });
+    },
+    [nutritionValues, nutritionVisible],
+  );
 
   if (nbOfPages < 0) {
     return <p>Connextion to the API</p>;
@@ -74,11 +100,18 @@ const NutritionValues = () => {
       <img src={products[0].imageUrl} alt="product" />
       <ul className="fields">
         {Object.keys(nutriments).map(nutrimentName => (
-          <li key={nutrimentName}>
+          <li
+            key={nutrimentName}
+            className={nutritionVisible[nutrimentName] ? 'shadow' : ''}
+          >
             <p className="nutrition-label">{nutrimentName}</p>
             <input type="number" className="nutrition-input" />
-            <button className="nutrition-validation">validate</button>
-            <button className="nutrition-deletion">delete</button>
+            <button
+              className="nutrition-deletion"
+              onClick={toogleVisibility(nutrimentName)}
+            >
+              {nutritionVisible[nutrimentName] ? 'delete' : 'restore'}
+            </button>
           </li>
         ))}
       </ul>

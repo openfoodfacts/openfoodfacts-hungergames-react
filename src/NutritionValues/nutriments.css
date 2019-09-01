@@ -31,3 +31,7 @@ ul {
 .fields .nutrition-deletion {
   width: 15%;
 }
+
+.shadow {
+  opacity: 0.5;
+}
