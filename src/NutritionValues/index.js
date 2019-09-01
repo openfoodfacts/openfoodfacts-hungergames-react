@@ -105,7 +105,17 @@ const NutritionValues = () => {
             className={nutritionVisible[nutrimentName] ? 'shadow' : ''}
           >
             <p className="nutrition-label">{nutrimentName}</p>
-            <input type="number" className="nutrition-input" />
+            <input
+              type="number"
+              value={nutritionValues[nutrimentName]}
+              className="nutrition-input"
+              onChange={e => {
+                setNutritionValues({
+                  ...nutritionValues,
+                  [nutrimentName]: e.target.value,
+                });
+              }}
+            />
             <button
               className="nutrition-deletion"
               onClick={toogleVisibility(nutrimentName)}
