@@ -182,7 +182,7 @@ const NutritionValues = () => {
             {Object.keys(nutriments).map(nutrimentName => (
               <li
                 key={nutrimentName}
-                className={nutritionVisible[nutrimentName] ? 'shadow' : ''}
+                className={nutritionVisible[nutrimentName] ? '' : 'shadow'}
               >
                 <p className="nutrition-label">{nutrimentName}</p>
                 <input
