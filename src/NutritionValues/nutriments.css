@@ -35,3 +35,33 @@ ul {
 .shadow {
   opacity: 0.2;
 }
+
+.recap {
+  color: white;
+  list-style-type: none;
+  margin: 20px auto;
+  max-width: 500px;
+  text-align: left;
+  max-width: 300px;
+}
+
+.recap li {
+  padding-left: 20px;
+}
+.recap .title {
+  padding: 5px 10px;
+  font-size: 150%;
+}
+.toDelete {
+  background-color: red;
+}
+.toIgnore {
+  background-color: orange;
+}
+.toSend {
+  background-color: green;
+}
+
+.validate {
+  background-color: green;
+}

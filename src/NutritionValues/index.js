@@ -77,33 +77,34 @@ const CheckEntries = ({
   );
   return (
     <>
-      <ol>
+      <ol className="recap">
         {toDelete.length > 0 && (
-          <>
-            <li>Will be deleted</li>
+          <div className="toDelete">
+            <li className="title">Will be deleted</li>
             {toDelete.map(nutrimentName => (
               <li>{nutrimentName}</li>
             ))}
-          </>
+          </div>
         )}
         {empty.length > 0 && (
-          <>
-            <li>You skip</li>
+          <div className="toIgnore">
+            <li className="title">You skip</li>
             {empty.map(nutrimentName => (
               <li>{nutrimentName}</li>
             ))}
-          </>
+          </div>
         )}
         {filled.length > 0 && (
-          <>
-            <li>You filled</li>
+          <div className="toSend">
+            <li className="title">You filled</li>
             {filled.map(nutrimentName => (
               <li>{`${nutrimentName} : ${nutritionValues[nutrimentName]}`}</li>
             ))}
-          </>
+          </div>
         )}
       </ol>
       <button
+        className="validate"
         onClick={() => {
           validate();
           close();
