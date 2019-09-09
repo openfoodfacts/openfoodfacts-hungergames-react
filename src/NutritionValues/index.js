@@ -55,12 +55,37 @@ const useGetProduct = nbOfPages => {
   return [loading, productsBacklog, setProductsBacklog];
 };
 
+const edit = ({ nutritionVisible, nutritionValues, nutrimentsKey, code }) => {
+  const toDelete = Object.keys(nutritionVisible)
+    .filter(nutrimentName => !nutritionVisible[nutrimentName])
+    .map(nutrimentName => nutrimentsKey[nutrimentName]);
+
+  const toFill = Object.keys(nutritionVisible)
+    .filter(
+      nutrimentName =>
+        nutritionVisible[nutrimentName] &&
+        nutritionValues[nutrimentName].length > 0,
+    )
+    .map(nutrimentName => ({
+      name: nutrimentsKey[nutrimentName],
+      value: nutritionValues[nutrimentName],
+    }));
+
+  axios.post(
+    `${process.env.REACT_APP_OFF_BASE}/cgi/product_jqm2.pl?`,
+    new URLSearchParams(
+      `${toFill.map(data => `${data.name}=${data.value}&`)}code=${code}`,
+    ),
+  ); // The status of the response is not displayed so no need to wait the response
+};
+
 const CheckEntries = ({
   nutriments,
   nutritionValues,
   nutritionVisible,
   close,
-  validate,
+  nextProduct,
+  code,
 }) => {
   const toDelete = Object.keys(nutriments).filter(
     nutrimentName => !nutritionVisible[nutrimentName],
@@ -106,8 +131,14 @@ const CheckEntries = ({
       <button
         className="validate"
         onClick={() => {
-          validate();
+          edit({
+            nutritionVisible,
+            nutritionValues,
+            nutrimentsKey: nutriments,
+            code,
+          });
           close();
+          nextProduct();
         }}
       >
         Validate
@@ -175,7 +206,10 @@ const NutritionValues = () => {
           close={() => {
             setIsLastCheckOpen(false);
           }}
-          validate={console.log('replace by API request')}
+          nextProduct={() => {
+            setProducts(products.slice(1));
+          }}
+          code={products[0].code}
         />
       ) : (
         <>
