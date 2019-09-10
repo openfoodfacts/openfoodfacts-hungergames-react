@@ -65,3 +65,10 @@ ul {
 .validate {
   background-color: green;
 }
+
+.skip {
+  background-color: gray;
+}
+.button {
+  margin: 5px;
+}

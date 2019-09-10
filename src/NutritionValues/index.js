@@ -32,7 +32,7 @@ const useGetProduct = nbOfPages => {
       const AddProducts = async () => {
         setLoading(true);
         const randomPage = Math.floor(Math.random() * nbOfPages);
-        let {
+        const {
           data: { products },
         } = await axios(
           `${
@@ -40,14 +40,17 @@ const useGetProduct = nbOfPages => {
           }/state/photos-validated/state/nutrition-facts-to-be-completed/${randomPage}.json?fields=code,lang,image_nutrition_url`,
         );
         setLoading(false);
-        products = products.map(product => {
-          return {
-            code: product.code,
-            imageUrl: product.image_nutrition_url,
-            lang: product.lang,
-          };
-        });
-        setProductsBacklog([...productsBacklog, ...products]);
+        setProductsBacklog(
+          productsBacklog.concat(
+            products.map(({ code, lang, image_nutrition_url }) => {
+              return {
+                code,
+                imageUrl: image_nutrition_url,
+                lang,
+              };
+            }),
+          ),
+        );
       };
       AddProducts();
     }
@@ -143,6 +146,7 @@ const NutritionValues = () => {
             ))}
           </ul>
           <button
+            className="skip button"
             onClick={() => {
               setProducts(products.slice(1));
             }}
@@ -150,6 +154,7 @@ const NutritionValues = () => {
             skip
           </button>
           <button
+            className="validate button"
             onClick={() => {
               setIsLastCheckOpen(true);
             }}

@@ -67,7 +67,7 @@ export default ({
         )}
         {filled.length > 0 && (
           <div className="toSend">
-            <li className="title">You filled</li>
+            <li className="title">You fill</li>
             {filled.map(nutrimentName => (
               <li>{`${nutrimentName} : ${nutritionValues[nutrimentName]}`}</li>
             ))}
@@ -75,7 +75,7 @@ export default ({
         )}
       </ol>
       <button
-        className="validate"
+        className="validate button"
         onClick={() => {
           edit({
             nutritionVisible,
@@ -90,6 +90,7 @@ export default ({
         Validate
       </button>
       <button
+        className="button"
         onClick={() => {
           close();
         }}
