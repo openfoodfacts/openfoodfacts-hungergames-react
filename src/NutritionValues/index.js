@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import CheckEntries from './checkEntries';
+import ImageZoom from 'react-medium-image-zoom';
 import axios from 'axios';
 import nutriments from './nutriments';
 import './nutriments.css';
@@ -102,7 +103,19 @@ const NutritionValues = () => {
 
   return (
     <div className="root">
-      <img src={products[0].imageUrl} alt="product" />
+      <ImageZoom
+        image={{
+          src: products[0].imageUrl,
+          alt: 'small product picture',
+        }}
+        zoomImage={{
+          src: products[0].imageUrl.match(/\/\d+\.400\.jpg$/i)
+            ? products[0].imageUrl.replace('.400.jpg', '.jpg')
+            : products[0].imageUrl.replace('.400.jpg', '.full.jpg'),
+          alt: 'full product picture',
+        }}
+        shouldReplaceImage={false}
+      />
       {isLastCheckOpen ? (
         <CheckEntries
           nutriments={nutriments}
