@@ -123,6 +123,7 @@ const NutritionValues = () => {
           nutriments={nutriments}
           nutritionValues={nutritionValues}
           nutritionVisible={nutritionVisible}
+          portionValues={portionValues}
           close={() => {
             setIsLastCheckOpen(false);
           }}

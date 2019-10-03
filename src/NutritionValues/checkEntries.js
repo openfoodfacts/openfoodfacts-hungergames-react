@@ -1,7 +1,13 @@
 import React from 'react';
 import axios from 'axios';
 
-const edit = ({ nutritionVisible, nutritionValues, nutrimentsKey, code }) => {
+const edit = ({
+  nutritionVisible,
+  nutritionValues,
+  nutrimentsKey,
+  portionValues,
+  code,
+}) => {
   const toDelete = Object.keys(nutritionVisible)
     .filter(nutrimentName => !nutritionVisible[nutrimentName])
     .map(nutrimentName => nutrimentsKey[nutrimentName]);
@@ -17,18 +23,40 @@ const edit = ({ nutritionVisible, nutritionValues, nutrimentsKey, code }) => {
       value: nutritionValues[nutrimentName],
     }));
 
-  axios.post(
-    `${process.env.REACT_APP_OFF_BASE}/cgi/product_jqm2.pl?`,
-    new URLSearchParams(
-      `${toFill.map(data => `${data.name}=${data.value}&`)}code=${code}`,
-    ),
-  ); // The status of the response is not displayed so no need to wait the response
+  if (toFill.length > 0) {
+    axios.post(
+      `${process.env.REACT_APP_OFF_BASE}/cgi/product_jqm2.pl?`,
+      new URLSearchParams(
+        `${toFill.map(data => `${data.name}=${data.value}&`)}code=${code}`,
+      ),
+    ); // The status of the response is not displayed so no need to wait the response
+  }
+
+  if (portionValues.quantity) {
+    const quantity = `${portionValues.quantity}${
+      portionValues.unit ? portionValues.unit : ''
+    }`;
+    if (portionValues.isPortion) {
+      axios.post(
+        `${process.env.REACT_APP_OFF_BASE}/cgi/product_jqm2.pl?`,
+        new URLSearchParams(
+          `nutrition_data_per=serving&serving_size=${quantity}&code=${code}`,
+        ),
+      );
+    } else {
+      axios.post(
+        `${process.env.REACT_APP_OFF_BASE}/cgi/product_jqm2.pl?`,
+        new URLSearchParams(`nutrition_data_per=${quantity}&code=${code}`),
+      );
+    }
+  }
 };
 
 export default ({
   nutriments,
   nutritionValues,
   nutritionVisible,
+  portionValues,
   close,
   nextProduct,
   code,
@@ -48,6 +76,16 @@ export default ({
   );
   return (
     <>
+      <p>
+        This is nutritions values for{' '}
+        {portionValues.quantity
+          ? `${portionValues.quantity} ${
+              portionValues.unit ? portionValues.unit : 'unknown unit'
+            }`
+          : "we don't know how much "}
+        of the product
+      </p>
+      {portionValues.isPortion ? <p>It is a portion of the product</p> : null}
       <ol className="recap">
         {toDelete.length > 0 && (
           <div className="toDelete">
@@ -81,6 +119,7 @@ export default ({
             nutritionVisible,
             nutritionValues,
             nutrimentsKey: nutriments,
+            portionValues,
             code,
           });
           close();
