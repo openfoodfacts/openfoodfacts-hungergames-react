@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import CheckEntries from './checkEntries';
 import ImageZoom from 'react-medium-image-zoom';
+import PortionSetter from './PortionSetter';
 import axios from 'axios';
 import nutriments from './nutriments';
 import './nutriments.css';
@@ -66,6 +67,7 @@ const NutritionValues = () => {
   const [nutritionValues, setNutritionValues] = useState({});
   const [nutritionVisible, setNutritionVisible] = useState({});
   const [isLastCheckOpen, setIsLastCheckOpen] = useState(false);
+  const [portionValues, setPortionValues] = useState({});
 
   useEffect(() => {
     const newNutritionValues = {};
@@ -131,6 +133,7 @@ const NutritionValues = () => {
         />
       ) : (
         <>
+          <PortionSetter values={portionValues} setValues={setPortionValues} />
           <ul className="fields">
             {Object.keys(nutriments).map(nutrimentName => (
               <li

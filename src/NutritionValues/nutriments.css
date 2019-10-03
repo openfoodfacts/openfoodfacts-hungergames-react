@@ -1,10 +1,28 @@
 .root {
   text-align: center;
+  max-width: 500px;
+  margin: auto;
+}
+
+.portion input {
+  display: inline;
+  margin: 0 1rem;
+}
+.portion .portion_value {
+  width: 5rem;
+}
+.portion .portion_unit {
+  width: 3rem;
+}
+.portion p {
+  margin: 0;
+}
+.portion {
+  margin-top: 1rem;
 }
 
 .fields {
   margin-top: 20px;
-  max-width: 500px;
 }
 
 ul {
