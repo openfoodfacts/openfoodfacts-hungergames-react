@@ -1,6 +1,6 @@
 import React from 'react';
 
-const UNITS = ['kg', 'g', 'mg', 'L', 'cl', 'ml'];
+const UNITS = ['g', 'kg', 'mg', 'L', 'cl', 'ml'];
 
 const PortionSetter = ({ values, setValues }) => {
   const setValue = name => event => {
@@ -25,6 +25,9 @@ const PortionSetter = ({ values, setValues }) => {
           onChange={setValue('unit')}
           className="portion_unit"
         >
+          <option disabled selected value>
+            unit
+          </option>
           {UNITS.map(unit => (
             <option value={unit}>{unit}</option>
           ))}

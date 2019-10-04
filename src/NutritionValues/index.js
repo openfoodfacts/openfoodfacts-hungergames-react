@@ -6,6 +6,14 @@ import axios from 'axios';
 import nutriments from './nutriments';
 import './nutriments.css';
 
+const NUTRIMENT_UNITS = nutrimentName => {
+  switch (nutrimentName) {
+    case 'Energy':
+      return ['Kj', 'kcal'];
+    default:
+      return ['g', 'mg'];
+  }
+};
 const useNumberOfPages = () => {
   const [nbOfPages, setNbOfPages] = useState(-1);
   useEffect(() => {
@@ -73,7 +81,7 @@ const NutritionValues = () => {
     const newNutritionValues = {};
     const newNutritionVisible = {};
     Object.keys(nutriments).forEach(nutrimentName => {
-      newNutritionValues[nutrimentName] = '';
+      newNutritionValues[nutrimentName] = {};
       newNutritionVisible[nutrimentName] = true;
     });
 
@@ -83,14 +91,38 @@ const NutritionValues = () => {
 
   const toogleVisibility = useCallback(
     nutrimentName => () => {
-      nutritionValues[nutrimentName] = '';
-      setNutritionValues({ ...nutritionValues, [nutrimentName]: '' });
+      setNutritionValues({ ...nutritionValues, [nutrimentName]: {} });
       setNutritionVisible({
         ...nutritionVisible,
         [nutrimentName]: !nutritionVisible[nutrimentName],
       });
     },
     [nutritionValues, nutritionVisible],
+  );
+
+  const setNutritionQuantity = useCallback(
+    nutrimentName => event => {
+      setNutritionValues({
+        ...nutritionValues,
+        [nutrimentName]: {
+          ...nutritionValues[nutrimentName],
+          quantity: event.target.value,
+        },
+      });
+    },
+    [nutritionValues],
+  );
+  const setNutritionUnit = useCallback(
+    nutrimentName => event => {
+      setNutritionValues({
+        ...nutritionValues,
+        [nutrimentName]: {
+          ...nutritionValues[nutrimentName],
+          unit: event.target.value,
+        },
+      });
+    },
+    [nutritionValues],
   );
 
   if (nbOfPages < 0) {
@@ -144,15 +176,22 @@ const NutritionValues = () => {
                 <p className="nutrition-label">{nutrimentName}</p>
                 <input
                   type="number"
-                  value={nutritionValues[nutrimentName]}
+                  value={nutritionValues[nutrimentName].quantity}
                   className="nutrition-input"
-                  onChange={e => {
-                    setNutritionValues({
-                      ...nutritionValues,
-                      [nutrimentName]: e.target.value,
-                    });
-                  }}
+                  onChange={setNutritionQuantity(nutrimentName)}
                 />
+                <select
+                  value={nutritionValues[nutrimentName].unit}
+                  onChange={setNutritionUnit(nutrimentName)}
+                  className="portion_unit"
+                >
+                  <option disabled selected value>
+                    unit
+                  </option>
+                  {NUTRIMENT_UNITS(nutrimentName).map(unit => (
+                    <option value={unit}>{unit}</option>
+                  ))}
+                </select>
                 <button
                   className="nutrition-deletion"
                   onClick={toogleVisibility(nutrimentName)}

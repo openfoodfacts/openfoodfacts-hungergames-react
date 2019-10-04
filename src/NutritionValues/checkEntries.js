@@ -16,18 +16,25 @@ const edit = ({
     .filter(
       nutrimentName =>
         nutritionVisible[nutrimentName] &&
-        nutritionValues[nutrimentName].length > 0,
+        nutritionValues[nutrimentName].quantity &&
+        nutritionValues[nutrimentName].quantity.length > 0,
     )
     .map(nutrimentName => ({
       name: nutrimentsKey[nutrimentName],
-      value: nutritionValues[nutrimentName],
+      value: `${nutritionValues[nutrimentName].quantity}${nutritionValues[
+        nutrimentName
+      ].unit || ''}`,
+      quantity: nutritionValues[nutrimentName].quantity,
+      unit: nutritionValues[nutrimentName].unit,
     }));
 
   if (toFill.length > 0) {
     axios.post(
       `${process.env.REACT_APP_OFF_BASE}/cgi/product_jqm2.pl?`,
       new URLSearchParams(
-        `${toFill.map(data => `${data.name}=${data.value}&`)}code=${code}`,
+        `${toFill.map(data => `${data.name}=${data.quantity}&`)}${toFill.map(
+          data => (data.unit ? `${data.name}_unit=${data.unit}&` : ''),
+        )}code=${code}`,
       ),
     ); // The status of the response is not displayed so no need to wait the response
   }
@@ -66,13 +73,16 @@ export default ({
   );
   const empty = Object.keys(nutriments).filter(
     nutrimentName =>
-      nutritionVisible[nutrimentName] &&
-      !nutritionValues[nutrimentName].length > 0,
+      (nutritionVisible[nutrimentName] &&
+        !nutritionValues[nutrimentName].quantity) ||
+      (nutritionVisible[nutrimentName] &&
+        !nutritionValues[nutrimentName].quantity.length > 0),
   );
   const filled = Object.keys(nutriments).filter(
     nutrimentName =>
       nutritionVisible[nutrimentName] &&
-      nutritionValues[nutrimentName].length > 0,
+      nutritionValues[nutrimentName].quantity &&
+      nutritionValues[nutrimentName].quantity.length > 0,
   );
   return (
     <>
@@ -107,7 +117,9 @@ export default ({
           <div className="toSend">
             <li className="title">You fill</li>
             {filled.map(nutrimentName => (
-              <li>{`${nutrimentName} : ${nutritionValues[nutrimentName]}`}</li>
+              <li>{`${nutrimentName} : ${
+                nutritionValues[nutrimentName].quantity
+              }${nutritionValues[nutrimentName].unit || ''}`}</li>
             ))}
           </div>
         )}

@@ -11,7 +11,8 @@
 .portion .portion_value {
   width: 5rem;
 }
-.portion .portion_unit {
+.portion .portion_unit,
+.portion_unit {
   width: 3rem;
 }
 .portion p {
