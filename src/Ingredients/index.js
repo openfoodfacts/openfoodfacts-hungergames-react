@@ -21,6 +21,7 @@ const Ingredients = () => {
       `${
         process.env.REACT_APP_OFF_BASE
       }/cgi/ingredients.pl?code=${code}&id=ingredients_fr&process_image=1&ocr_engine=google_cloud_vision`,
+      { withCredentials: true },
     );
     if (!ingredients_text_from_image) {
       return '';
@@ -32,6 +33,7 @@ const Ingredients = () => {
         process.env.REACT_APP_ROBOTOFF_BASE
       }/api/v1/predict/ingredients/spellcheck`,
       new URLSearchParams(`text=${ingredients_text_from_image}`),
+      { withCredentials: true },
     );
     return corrected || text;
   };
@@ -44,6 +46,7 @@ const Ingredients = () => {
       `${
         process.env.REACT_APP_OFF_BASE
       }/state/photos-validated/state/ingredients-to-be-completed.json?fields=null`,
+      { withCredentials: true },
     ); // TODO: should be done only one times
     const randomPage = Math.floor((Math.random() * count) / page_size);
     const {
@@ -52,6 +55,7 @@ const Ingredients = () => {
       `${
         process.env.REACT_APP_OFF_BASE
       }/state/photos-validated/state/ingredients-to-be-completed/${randomPage}.json`,
+      { withCredentials: true },
     );
     const ingredientsResults = await axios.all(
       // 20 parallels request will be to much
@@ -83,6 +87,7 @@ const Ingredients = () => {
         new URLSearchParams(
           `ingredients_text_fr=${ingredients}&code=${products[0].code}`,
         ),
+        { withCredentials: true },
       ); // The status of the response is not displayed so no need to wait the response
     }
     setValidateInput('');

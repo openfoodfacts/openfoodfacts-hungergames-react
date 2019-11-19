@@ -80,6 +80,7 @@ const Questions = () => {
       }&lang=${subDomain.languageCode}&count=5${
         brands ? `&brands=${brands}` : ''
       }${`&insight_types=${selectedInsights.join(',')}`}`,
+      { withCredentials: true },
     )
       .then(({ data }) => {
         questionsResults = data.questions
@@ -101,6 +102,7 @@ const Questions = () => {
               }.openfoodfacts.org/api/v0/product/${
                 q.barcode
               }.json?fields=product_name`,
+              { withCredentials: true },
             ),
           ),
         );
@@ -128,6 +130,7 @@ const Questions = () => {
           questions[0].insight_id
         }&annotation=${annotation}&update=1`,
       ),
+      { withCredentials: true },
     ); // The status of the response is not displayed so no need to wait the response
     setQuestions(questions.filter((_, i) => i)); // remove first question
   };
