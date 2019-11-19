@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+import subDomain from '../Common/subdomain';
+
 const Ingredients = () => {
   const isLogged = document.cookie
     .split(';')
@@ -20,7 +22,9 @@ const Ingredients = () => {
     } = await axios(
       `${
         process.env.REACT_APP_OFF_BASE
-      }/cgi/ingredients.pl?code=${code}&id=ingredients_fr&process_image=1&ocr_engine=google_cloud_vision`,
+      }/cgi/ingredients.pl?code=${code}&id=ingredients_${
+        subDomain.languageCode
+      }&process_image=1&ocr_engine=google_cloud_vision`,
     );
     if (!ingredients_text_from_image) {
       return '';
@@ -81,7 +85,9 @@ const Ingredients = () => {
       axios.post(
         `${process.env.REACT_APP_OFF_BASE}/cgi/product_jqm2.pl?`,
         new URLSearchParams(
-          `ingredients_text_fr=${ingredients}&code=${products[0].code}`,
+          `ingredients_text_${subDomain.languageCode}=${ingredients}&code=${
+            products[0].code
+          }`,
         ),
       ); // The status of the response is not displayed so no need to wait the response
     }

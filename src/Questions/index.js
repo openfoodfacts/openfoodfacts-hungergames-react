@@ -2,41 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ImageZoom from 'react-medium-image-zoom';
 
-import countries from './countries';
+import countries from '../Common/countries';
 import insightTypes from './insightTypes';
 import './questions.css';
+import subDomain from '../Common/subdomain';
 
 const NO_QUESTION_REMAINING = 'NO_QUESTION_REMAINING';
-
-const subDomain = (() => {
-  const matches = /^https:\/\/((world|\w{2})(?:-(\w{2}))?)\.openfoodfacts\.org/.exec(
-    window.location.href,
-  );
-  if (!matches) {
-    return { subDomain: 'world', countryCode: 'world', languageCode: 'en' };
-  }
-
-  const countryCode = matches[2].toLowerCase();
-  if (matches[3]) {
-    return {
-      subDomain: matches[1],
-      countryCode: countryCode,
-      languageCode: matches[3],
-    };
-  }
-
-  const country = countries.find(
-    country =>
-      country.countryCode !== undefined &&
-      country.countryCode.toLowerCase() === countryCode,
-  );
-  const languageCode = country === undefined ? 'en' : country.languageCode;
-  return {
-    subDomain: matches[1],
-    countryCode: countryCode,
-    languageCode: languageCode,
-  };
-})();
 
 const Questions = () => {
   const [questions, setQuestions] = useState([]);
