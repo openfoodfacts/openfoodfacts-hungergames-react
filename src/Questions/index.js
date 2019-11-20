@@ -8,6 +8,9 @@ import './questions.css';
 
 const NO_QUESTION_REMAINING = 'NO_QUESTION_REMAINING';
 
+const getRandomElement = array =>
+  array[Math.floor(array.length * Math.random())];
+
 const subDomain = (() => {
   const matches = /^https:\/\/((world|\w{2})(?:-(\w{2}))?)\.openfoodfacts\.org/.exec(
     window.location.href,
@@ -79,7 +82,11 @@ const Questions = () => {
         country === 'en:world' ? '' : `country=${country}`
       }&lang=${subDomain.languageCode}&count=5${
         brands ? `&brands=${brands}` : ''
-      }${`&insight_types=${selectedInsights.join(',')}`}`,
+      }${
+        selectedInsights.length < Object.keys(insightTypes).length
+          ? `&insight_types=${getRandomElement(selectedInsights)}`
+          : ''
+      }`,
     )
       .then(({ data }) => {
         questionsResults = data.questions
