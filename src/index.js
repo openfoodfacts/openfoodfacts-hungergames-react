@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === 'development') {
 let App;
 if (window.location.search.includes('type=ingredients')) {
   App = Ingredients;
-} else if (window.location.search.includes('type=nutritions')) {
+} else if (window.location.search.includes('type=nutrition')) {
   App = Nutritions;
 } else {
   App = Questions;

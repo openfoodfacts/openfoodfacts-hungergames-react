@@ -9,7 +9,7 @@ import './nutriments.css';
 const NUTRIMENT_UNITS = nutrimentName => {
   switch (nutrimentName) {
     case 'Energy':
-      return ['Kj', 'kcal'];
+      return ['kJ', 'kcal'];
     default:
       return ['g', 'mg'];
   }
@@ -21,9 +21,7 @@ const useNumberOfPages = () => {
       const {
         data: { count, page_size },
       } = await axios(
-        `${
-          process.env.REACT_APP_OFF_BASE
-        }state/photos-validated/state/nutrition-facts-to-be-completed/1.json?fields=null`,
+        `${process.env.REACT_APP_OFF_BASE}state/photos-validated/state/nutrition-facts-to-be-completed/1.json?fields=null`,
       );
 
       setNbOfPages(Math.ceil(count / page_size));
@@ -45,9 +43,7 @@ const useGetProduct = nbOfPages => {
         const {
           data: { products },
         } = await axios(
-          `${
-            process.env.REACT_APP_OFF_BASE
-          }/state/photos-validated/state/nutrition-facts-to-be-completed/${randomPage}.json?fields=code,lang,image_nutrition_url`,
+          `${process.env.REACT_APP_OFF_BASE}/state/photos-validated/state/nutrition-facts-to-be-completed/${randomPage}.json?fields=code,lang,image_nutrition_url`,
         );
         setLoading(false);
         setProductsBacklog(
@@ -126,13 +122,13 @@ const NutritionValues = () => {
   );
 
   if (nbOfPages < 0) {
-    return <p>Connextion to the API</p>;
+    return <p>Connecting to Open Food Facts…</p>;
   }
   if (loadingProducts) {
-    return <p>Loading Products</p>;
+    return <p>Loading products</p>;
   }
   if (products.length === 0) {
-    return <p>No Product found</p>;
+    return <p>No product found</p>;
   }
 
   return (
