@@ -16,20 +16,22 @@ const PortionSetter = ({ values, setValues }) => {
         Data per:
         <input
           type="number"
-          value={values.quantity}
+          value={values.quantity || 0}
           onChange={setValue('quantity')}
           className="portion_value"
         />
         <select
-          value={values.unit}
+          value={values.unit || -1}
           onChange={setValue('unit')}
           className="portion_unit"
         >
-          <option disabled selected value>
+          <option disabled value={-1}>
             unit
           </option>
           {UNITS.map(unit => (
-            <option value={unit}>{unit}</option>
+            <option key={unit} value={unit}>
+              {unit}
+            </option>
           ))}
         </select>
       </p>
