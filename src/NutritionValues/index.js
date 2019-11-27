@@ -176,7 +176,7 @@ const NutritionValues = () => {
                 <p className="nutrition-label">{nutrimentName}</p>
                 <input
                   type="number"
-                  value={nutritionValues[nutrimentName].quantity}
+                  value={nutritionValues[nutrimentName].quantity || 0}
                   className="nutrition-input"
                   onChange={setNutritionQuantity(nutrimentName)}
                 />

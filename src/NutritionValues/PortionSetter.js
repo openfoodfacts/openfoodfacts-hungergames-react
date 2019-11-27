@@ -16,7 +16,7 @@ const PortionSetter = ({ values, setValues }) => {
         Data per:
         <input
           type="number"
-          value={values.quantity}
+          value={values.quantity || 0}
           onChange={setValue('quantity')}
           className="portion_value"
         />
