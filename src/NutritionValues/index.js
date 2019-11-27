@@ -21,7 +21,9 @@ const useNumberOfPages = () => {
       const {
         data: { count, page_size },
       } = await axios(
-        `${process.env.REACT_APP_OFF_BASE}state/photos-validated/state/nutrition-facts-to-be-completed/1.json?fields=null`,
+        `${
+          process.env.REACT_APP_OFF_BASE
+        }state/photos-validated/state/nutrition-facts-to-be-completed/1.json?fields=null`,
       );
 
       setNbOfPages(Math.ceil(count / page_size));
@@ -43,7 +45,9 @@ const useGetProduct = nbOfPages => {
         const {
           data: { products },
         } = await axios(
-          `${process.env.REACT_APP_OFF_BASE}/state/photos-validated/state/nutrition-facts-to-be-completed/${randomPage}.json?fields=code,lang,image_nutrition_url`,
+          `${
+            process.env.REACT_APP_OFF_BASE
+          }/state/photos-validated/state/nutrition-facts-to-be-completed/${randomPage}.json?fields=code,lang,image_nutrition_url`,
         );
         setLoading(false);
         setProductsBacklog(
@@ -186,7 +190,9 @@ const NutritionValues = () => {
                     unit
                   </option>
                   {NUTRIMENT_UNITS(nutrimentName).map(unit => (
-                    <option value={unit}>{unit}</option>
+                    <option key={unit} value={unit}>
+                      {unit}
+                    </option>
                   ))}
                 </select>
                 <button

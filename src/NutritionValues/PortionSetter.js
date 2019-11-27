@@ -30,7 +30,9 @@ const PortionSetter = ({ values, setValues }) => {
             unit
           </option>
           {UNITS.map(unit => (
-            <option value={unit}>{unit}</option>
+            <option key={unit} value={unit}>
+              {unit}
+            </option>
           ))}
         </select>
       </p>

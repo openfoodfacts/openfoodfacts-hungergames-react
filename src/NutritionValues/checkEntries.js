@@ -110,7 +110,7 @@ export default ({
           <div className="toDelete">
             <li className="title">Will be deleted</li>
             {toDelete.map(nutrimentName => (
-              <li>{nutrimentName}</li>
+              <li key={nutrimentName}>{nutrimentName}</li>
             ))}
           </div>
         )}
@@ -118,7 +118,7 @@ export default ({
           <div className="toIgnore">
             <li className="title">You skip</li>
             {empty.map(nutrimentName => (
-              <li>{nutrimentName}</li>
+              <li key={nutrimentName}>{nutrimentName}</li>
             ))}
           </div>
         )}
@@ -126,7 +126,7 @@ export default ({
           <div className="toSend">
             <li className="title">You fill</li>
             {filled.map(nutrimentName => (
-              <li>{`${nutrimentName} : ${
+              <li key={nutrimentName}>{`${nutrimentName} : ${
                 nutritionValues[nutrimentName].quantity
               }${nutritionValues[nutrimentName].unit || ''}`}</li>
             ))}
