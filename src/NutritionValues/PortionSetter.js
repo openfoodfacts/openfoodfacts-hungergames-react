@@ -24,8 +24,9 @@ const PortionSetter = ({ values, setValues }) => {
           value={values.unit}
           onChange={setValue('unit')}
           className="portion_unit"
+          defaultValue={-1}
         >
-          <option disabled selected value>
+          <option disabled value={-1}>
             unit
           </option>
           {UNITS.map(unit => (

@@ -180,8 +180,9 @@ const NutritionValues = () => {
                   value={nutritionValues[nutrimentName].unit}
                   onChange={setNutritionUnit(nutrimentName)}
                   className="portion_unit"
+                  defaultValue={-1}
                 >
-                  <option disabled selected value>
+                  <option disabled value={-1}>
                     unit
                   </option>
                   {NUTRIMENT_UNITS(nutrimentName).map(unit => (
