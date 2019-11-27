@@ -32,7 +32,9 @@ const edit = ({
     axios.post(
       `${process.env.REACT_APP_OFF_BASE}/cgi/product_jqm2.pl?`,
       new URLSearchParams(
-        `${toFill.map(data => `${data.name}=${data.quantity}&`)}${toFill
+        `${toFill
+          .map(data => `${data.name}=${data.quantity}&`)
+          .join('')}${toFill
           .map(data => (data.unit ? `${data.name}_unit=${data.unit}&` : ''))
           .join('')}code=${code}`,
       ),
