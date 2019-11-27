@@ -181,10 +181,9 @@ const NutritionValues = () => {
                   onChange={setNutritionQuantity(nutrimentName)}
                 />
                 <select
-                  value={nutritionValues[nutrimentName].unit}
+                  value={nutritionValues[nutrimentName].unit || -1}
                   onChange={setNutritionUnit(nutrimentName)}
                   className="portion_unit"
-                  defaultValue={-1}
                 >
                   <option disabled value={-1}>
                     unit
