@@ -8,4 +8,5 @@ export default {
   Proteins: 'nutriment_proteins',
   Fibers: 'nutriment_fibers',
   Salt: 'nutriment_salt',
+  Sodium: 'nutriment_sodium',
 };
