@@ -149,7 +149,7 @@ const NutritionValues = () => {
           target="_blank"
           href={products[0].productLink}
         >
-          {products[0].productName}
+          {products[0].productName || 'Product Page'}
         </a>
       </h4>
       <ImageZoom
