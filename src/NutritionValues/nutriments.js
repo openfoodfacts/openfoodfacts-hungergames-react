@@ -5,6 +5,6 @@ export default {
   Carbs: 'nutriment_carbohydrates',
   Sugar: 'nutriment_sugars',
   Proteins: 'nutriment_proteins',
-  Fibers: 'nutriment_fibers',
+  Fibers: 'nutriment_fiber',
   Salt: 'nutriment_salt',
 };
