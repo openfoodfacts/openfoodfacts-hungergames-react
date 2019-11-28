@@ -4,6 +4,7 @@ import ImageZoom from 'react-medium-image-zoom';
 import PortionSetter from './PortionSetter';
 import axios from 'axios';
 import nutriments from './nutriments';
+import { getSubDomain } from '../utils';
 import './nutriments.css';
 
 const NUTRIMENT_UNITS = nutrimentName => {
@@ -47,18 +48,22 @@ const useGetProduct = nbOfPages => {
         } = await axios(
           `${
             process.env.REACT_APP_OFF_BASE
-          }/state/photos-validated/state/nutrition-facts-to-be-completed/${randomPage}.json?fields=code,lang,image_nutrition_url`,
+          }/state/photos-validated/state/nutrition-facts-to-be-completed/${randomPage}.json?fields=code,lang,image_nutrition_url,product_name`,
         );
         setLoading(false);
         setProductsBacklog(
           productsBacklog.concat(
-            products.map(({ code, lang, image_nutrition_url }) => {
-              return {
-                code,
-                imageUrl: image_nutrition_url,
-                lang,
-              };
-            }),
+            products.map(
+              ({ code, lang, image_nutrition_url, product_name }) => {
+                return {
+                  code,
+                  imageUrl: image_nutrition_url,
+                  lang,
+                  productLink: `https://${getSubDomain()}.openfoodfacts.org/product/${code}`,
+                  productName: product_name,
+                };
+              },
+            ),
           ),
         );
       };
@@ -137,6 +142,15 @@ const NutritionValues = () => {
 
   return (
     <div className="root">
+      <h4 className="productName">
+        <a
+          rel="noopener noreferrer"
+          target="_blank"
+          href={products[0].productLink}
+        >
+          {products[0].productName}
+        </a>
+      </h4>
       <ImageZoom
         image={{
           src: products[0].imageUrl,
