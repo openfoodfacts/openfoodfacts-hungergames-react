@@ -9,8 +9,10 @@ import './nutriments.css';
 
 const NUTRIMENT_UNITS = nutrimentName => {
   switch (nutrimentName) {
-    case 'Energy':
-      return ['kJ', 'kcal'];
+    case 'Energy (kCal)':
+      return ['kcal'];
+    case 'Energy (kJ)':
+      return ['kJ'];
     default:
       return ['g', 'mg'];
   }
@@ -86,10 +88,9 @@ const NutritionValues = () => {
     const newNutritionValues = {};
     const newNutritionVisible = {};
     Object.keys(nutriments).forEach(nutrimentName => {
-      newNutritionValues[nutrimentName] = {};
+      newNutritionValues[nutrimentName] = { quantity: '', value: '' };
       newNutritionVisible[nutrimentName] = true;
     });
-
     setNutritionValues(newNutritionValues);
     setNutritionVisible(newNutritionVisible);
   }, [products[0]]);
@@ -190,24 +191,31 @@ const NutritionValues = () => {
                 <p className="nutrition-label">{nutrimentName}</p>
                 <input
                   type="number"
-                  value={nutritionValues[nutrimentName].quantity || 0}
+                  value={nutritionValues[nutrimentName].quantity}
                   className="nutrition-input"
                   onChange={setNutritionQuantity(nutrimentName)}
                 />
-                <select
-                  value={nutritionValues[nutrimentName].unit || -1}
-                  onChange={setNutritionUnit(nutrimentName)}
-                  className="portion_unit"
-                >
-                  <option disabled value={-1}>
-                    unit
-                  </option>
-                  {NUTRIMENT_UNITS(nutrimentName).map(unit => (
-                    <option key={unit} value={unit}>
-                      {unit}
+                {NUTRIMENT_UNITS(nutrimentName).length > 1 ? (
+                  <select
+                    value={nutritionValues[nutrimentName].unit}
+                    onChange={setNutritionUnit(nutrimentName)}
+                    className="portion_unit"
+                  >
+                    <option disabled value="">
+                      unit
                     </option>
-                  ))}
-                </select>
+                    {NUTRIMENT_UNITS(nutrimentName).map(unit => (
+                      <option key={unit} value={unit}>
+                        {unit}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <span className="portion_unit">
+                    {NUTRIMENT_UNITS(nutrimentName)[0]}
+                  </span>
+                )}
+
                 <button
                   className="nutrition-deletion"
                   onClick={toogleVisibility(nutrimentName)}

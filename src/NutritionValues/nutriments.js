@@ -1,5 +1,6 @@
 export default {
-  Energy: 'nutriment_energy',
+  'Energy (kJ)': 'nutriment_energy-kj',
+  'Energy (kCal)': 'nutriment_energy-kcal',
   Fat: 'nutriment_fat',
   'Sat Fat': 'nutriment_saturated-fat',
   Carbs: 'nutriment_carbohydrates',
