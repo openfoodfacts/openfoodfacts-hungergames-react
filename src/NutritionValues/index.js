@@ -4,12 +4,15 @@ import ImageZoom from 'react-medium-image-zoom';
 import PortionSetter from './PortionSetter';
 import axios from 'axios';
 import nutriments from './nutriments';
+import { getSubDomain } from '../utils';
 import './nutriments.css';
 
 const NUTRIMENT_UNITS = nutrimentName => {
   switch (nutrimentName) {
-    case 'Energy':
-      return ['kJ', 'kcal'];
+    case 'Energy (kCal)':
+      return ['kcal'];
+    case 'Energy (kJ)':
+      return ['kJ'];
     default:
       return ['g', 'mg'];
   }
@@ -47,18 +50,22 @@ const useGetProduct = nbOfPages => {
         } = await axios(
           `${
             process.env.REACT_APP_OFF_BASE
-          }/state/photos-validated/state/nutrition-facts-to-be-completed/${randomPage}.json?fields=code,lang,image_nutrition_url`,
+          }/state/photos-validated/state/nutrition-facts-to-be-completed/${randomPage}.json?fields=code,lang,image_nutrition_url,product_name`,
         );
         setLoading(false);
         setProductsBacklog(
           productsBacklog.concat(
-            products.map(({ code, lang, image_nutrition_url }) => {
-              return {
-                code,
-                imageUrl: image_nutrition_url,
-                lang,
-              };
-            }),
+            products.map(
+              ({ code, lang, image_nutrition_url, product_name }) => {
+                return {
+                  code,
+                  imageUrl: image_nutrition_url,
+                  lang,
+                  productLink: `https://${getSubDomain()}.openfoodfacts.org/product/${code}`,
+                  productName: product_name,
+                };
+              },
+            ),
           ),
         );
       };
@@ -81,10 +88,9 @@ const NutritionValues = () => {
     const newNutritionValues = {};
     const newNutritionVisible = {};
     Object.keys(nutriments).forEach(nutrimentName => {
-      newNutritionValues[nutrimentName] = {};
+      newNutritionValues[nutrimentName] = { quantity: '', value: '' };
       newNutritionVisible[nutrimentName] = true;
     });
-
     setNutritionValues(newNutritionValues);
     setNutritionVisible(newNutritionVisible);
   }, [products[0]]);
@@ -137,6 +143,15 @@ const NutritionValues = () => {
 
   return (
     <div className="root">
+      <h4 className="productName">
+        <a
+          rel="noopener noreferrer"
+          target="_blank"
+          href={products[0].productLink}
+        >
+          {products[0].productName || 'Product Page'}
+        </a>
+      </h4>
       <ImageZoom
         image={{
           src: products[0].imageUrl,
@@ -176,24 +191,31 @@ const NutritionValues = () => {
                 <p className="nutrition-label">{nutrimentName}</p>
                 <input
                   type="number"
-                  value={nutritionValues[nutrimentName].quantity || 0}
+                  value={nutritionValues[nutrimentName].quantity}
                   className="nutrition-input"
                   onChange={setNutritionQuantity(nutrimentName)}
                 />
-                <select
-                  value={nutritionValues[nutrimentName].unit || -1}
-                  onChange={setNutritionUnit(nutrimentName)}
-                  className="portion_unit"
-                >
-                  <option disabled value={-1}>
-                    unit
-                  </option>
-                  {NUTRIMENT_UNITS(nutrimentName).map(unit => (
-                    <option key={unit} value={unit}>
-                      {unit}
+                {NUTRIMENT_UNITS(nutrimentName).length > 1 ? (
+                  <select
+                    value={nutritionValues[nutrimentName].unit}
+                    onChange={setNutritionUnit(nutrimentName)}
+                    className="portion_unit"
+                  >
+                    <option disabled value="">
+                      unit
                     </option>
-                  ))}
-                </select>
+                    {NUTRIMENT_UNITS(nutrimentName).map(unit => (
+                      <option key={unit} value={unit}>
+                        {unit}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <span className="portion_unit">
+                    {NUTRIMENT_UNITS(nutrimentName)[0]}
+                  </span>
+                )}
+
                 <button
                   className="nutrition-deletion"
                   onClick={toogleVisibility(nutrimentName)}
