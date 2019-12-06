@@ -4,6 +4,8 @@ import axios from 'axios';
 
 import Ingredients from './Ingredients';
 import Questions from './Questions';
+import Nutritions from './NutritionValues';
+
 import './app.css';
 
 axios.interceptors.response.use(res => {
@@ -15,9 +17,12 @@ if (process.env.NODE_ENV === 'development') {
   // simulate login in dev
   document.cookie = 'session=ok';
 }
-
-const App = window.location.search.includes('type=ingredients')
-  ? Ingredients
-  : Questions;
-
+let App;
+if (window.location.search.includes('type=ingredients')) {
+  App = Ingredients;
+} else if (window.location.search.includes('type=nutrition')) {
+  App = Nutritions;
+} else {
+  App = Questions;
+}
 ReactDOM.render(<App />, document.getElementById('root'));

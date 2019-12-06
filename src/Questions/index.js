@@ -60,18 +60,12 @@ const Questions = () => {
           )
           .map(q => ({
             ...q,
-            productLink: `https://${
-              subDomain.subDomain
-            }.openfoodfacts.org/product/${q.barcode}`,
+            productLink: `https://${subDomain.subDomain}.openfoodfacts.org/product/${q.barcode}`,
           }));
         return axios.all(
           questionsResults.map(q =>
             axios(
-              `https://${
-                subDomain.subDomain
-              }.openfoodfacts.org/api/v0/product/${
-                q.barcode
-              }.json?fields=product_name`,
+              `https://${subDomain.subDomain}.openfoodfacts.org/api/v0/product/${q.barcode}.json?fields=product_name`,
             ),
           ),
         );
@@ -95,10 +89,9 @@ const Questions = () => {
     axios.post(
       'https://robotoff.openfoodfacts.org/api/v1/insights/annotate',
       new URLSearchParams(
-        `insight_id=${
-          questions[0].insight_id
-        }&annotation=${annotation}&update=1`,
+        `insight_id=${questions[0].insight_id}&annotation=${annotation}&update=1`,
       ),
+      { withCredentials: true },
     ); // The status of the response is not displayed so no need to wait the response
     setQuestions(questions.filter((_, i) => i)); // remove first question
   };
