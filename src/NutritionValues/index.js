@@ -26,7 +26,7 @@ const useNumberOfPages = () => {
       } = await axios(
         `${
           process.env.REACT_APP_OFF_BASE
-        }state/photos-validated/state/nutrition-facts-to-be-completed/1.json?fields=null`,
+        }/state/photos-validated/state/nutrition-facts-to-be-completed/1.json?fields=null`,
       );
 
       setNbOfPages(Math.ceil(count / page_size));
