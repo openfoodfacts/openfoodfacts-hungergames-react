@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-import subDomain from '../Common/subdomain';
+import subDomain from '../common/subdomain';
 
 const Ingredients = () => {
   const isLogged = document.cookie
@@ -32,7 +32,9 @@ const Ingredients = () => {
     const {
       data: { text, corrected },
     } = await axios.post(
-      `${process.env.REACT_APP_ROBOTOFF_BASE}/api/v1/predict/ingredients/spellcheck`,
+      `${
+        process.env.REACT_APP_ROBOTOFF_BASE
+      }/api/v1/predict/ingredients/spellcheck`,
       new URLSearchParams(`text=${ingredients_text_from_image}`),
     );
     return corrected || text;
@@ -43,13 +45,17 @@ const Ingredients = () => {
     const {
       data: { count, page_size },
     } = await axios(
-      `${process.env.REACT_APP_OFF_BASE}/state/photos-validated/state/ingredients-to-be-completed.json?fields=null`,
+      `${
+        process.env.REACT_APP_OFF_BASE
+      }/state/photos-validated/state/ingredients-to-be-completed.json?fields=null`,
     ); // TODO: should be done only one times
     const randomPage = Math.floor((Math.random() * count) / page_size);
     const {
       data: { products: newProducts },
     } = await axios(
-      `${process.env.REACT_APP_OFF_BASE}/state/photos-validated/state/ingredients-to-be-completed/${randomPage}.json`,
+      `${
+        process.env.REACT_APP_OFF_BASE
+      }/state/photos-validated/state/ingredients-to-be-completed/${randomPage}.json`,
     );
     const ingredientsResults = await axios.all(
       // 20 parallels request will be to much
