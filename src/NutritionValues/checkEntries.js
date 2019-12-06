@@ -98,12 +98,12 @@ export default ({
   return (
     <>
       <p>
-        This is nutritions values for{' '}
+        Those are the nutrition values for {' '}
         {portionValues.quantity
           ? `${portionValues.quantity} ${
               portionValues.unit ? portionValues.unit : 'unknown unit'
             }`
-          : "we don't know how much "}
+          : " we don't know how much "}
         of the product
       </p>
       {portionValues.isPortion ? <p>It is a portion of the product</p> : null}
