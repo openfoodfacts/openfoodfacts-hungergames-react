@@ -40,17 +40,26 @@ const Questions = () => {
     );
   };
 
-  const brands = new URL(window.location.href).searchParams.get('brands');
+  const urlSearchParams = new URL(window.location.href).searchParams;
+  const brands = urlSearchParams.get('brands');
+  const valueTag = urlSearchParams.get('value_tag');
 
   const loadQuestions = () => {
     setLoading(true);
     let questionsResults;
-    axios(
-      `https://robotoff.openfoodfacts.org/api/v1/questions/random?${
-        country === 'en:world' ? '' : `country=${country}`
-      }&lang=${subDomain.languageCode}&count=5${
-        brands ? `&brands=${brands}` : ''
-      }${`&insight_types=${selectedInsights.join(',')}`}`,
+
+    axios.get(
+      'https://robotoff.openfoodfacts.org/api/v1/questions/random',
+      {
+        params: {
+          lang: subDomain.languageCode,
+          count: 5,
+          insight_types: selectedInsights.join(','),
+          ...(country === 'en:world' ? {} : { country }),
+          ...(brands ? { brands } : {}),
+          ...(valueTag ? { value_tag: valueTag } : {}),
+        }
+      }
     )
       .then(({ data }) => {
         questionsResults = data.questions
