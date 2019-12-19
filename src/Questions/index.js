@@ -2,41 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ImageZoom from 'react-medium-image-zoom';
 
-import countries from './countries';
+import countries from '../common/countries';
 import insightTypes from './insightTypes';
 import './questions.css';
+import subDomain from '../common/subdomain';
 
 const NO_QUESTION_REMAINING = 'NO_QUESTION_REMAINING';
-
-const subDomain = (() => {
-  const matches = /^https:\/\/((world|\w{2})(?:-(\w{2}))?)\.openfoodfacts\.org/.exec(
-    window.location.href,
-  );
-  if (!matches) {
-    return { subDomain: 'world', countryCode: 'world', languageCode: 'en' };
-  }
-
-  const countryCode = matches[2].toLowerCase();
-  if (matches[3]) {
-    return {
-      subDomain: matches[1],
-      countryCode: countryCode,
-      languageCode: matches[3],
-    };
-  }
-
-  const country = countries.find(
-    country =>
-      country.countryCode !== undefined &&
-      country.countryCode.toLowerCase() === countryCode,
-  );
-  const languageCode = country === undefined ? 'en' : country.languageCode;
-  return {
-    subDomain: matches[1],
-    countryCode: countryCode,
-    languageCode: languageCode,
-  };
-})();
 
 const Questions = () => {
   const [questions, setQuestions] = useState([]);
@@ -89,12 +60,18 @@ const Questions = () => {
           )
           .map(q => ({
             ...q,
-            productLink: `https://${subDomain.subDomain}.openfoodfacts.org/product/${q.barcode}`,
+            productLink: `https://${
+              subDomain.subDomain
+            }.openfoodfacts.org/product/${q.barcode}`,
           }));
         return axios.all(
           questionsResults.map(q =>
             axios(
-              `https://${subDomain.subDomain}.openfoodfacts.org/api/v0/product/${q.barcode}.json?fields=product_name`,
+              `https://${
+                subDomain.subDomain
+              }.openfoodfacts.org/api/v0/product/${
+                q.barcode
+              }.json?fields=product_name`,
             ),
           ),
         );
@@ -118,7 +95,9 @@ const Questions = () => {
     axios.post(
       'https://robotoff.openfoodfacts.org/api/v1/insights/annotate',
       new URLSearchParams(
-        `insight_id=${questions[0].insight_id}&annotation=${annotation}&update=1`,
+        `insight_id=${
+          questions[0].insight_id
+        }&annotation=${annotation}&update=1`,
       ),
       { withCredentials: true },
     ); // The status of the response is not displayed so no need to wait the response

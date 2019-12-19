@@ -9,7 +9,7 @@ import Nutritions from './NutritionValues';
 import './app.css';
 
 axios.interceptors.response.use(res => {
-  console.log(res.data); // TODO: display ok
+  console.debug(res.data); // TODO: display ok
   return res;
 }, console.error); // TODO: display error
 

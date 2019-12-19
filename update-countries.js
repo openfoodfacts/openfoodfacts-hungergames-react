@@ -4,7 +4,7 @@ const axios = require('axios');
 axios('https://static.openfoodfacts.org/data/taxonomies/countries.json')
   .then(({ data }) => {
     fs.writeFile(
-      './src/countries.json',
+      './src/common/countries.json',
       JSON.stringify(
         Object.entries(data)
           .map(([key, value]) => ({
