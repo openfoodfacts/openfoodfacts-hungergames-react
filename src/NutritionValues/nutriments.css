@@ -1,0 +1,93 @@
+.root {
+  text-align: center;
+  max-width: 500px;
+  margin: auto;
+}
+
+.portion input {
+  display: inline;
+  margin: 0 1rem;
+}
+.portion .portion_value {
+  width: 5rem;
+}
+.portion .portion_unit,
+.portion_unit {
+  width: 3rem;
+}
+.portion p {
+  margin: 0;
+}
+.portion {
+  margin-top: 1rem;
+}
+
+.fields {
+  margin-top: 20px;
+}
+
+ul {
+  list-style-type: none;
+  margin: auto;
+}
+.fields li * {
+  display: inline-block;
+  margin-right: 5%;
+}
+.fields li button {
+  padding: 5px;
+}
+
+.fields .nutrition-label {
+  width: 30%;
+}
+.fields .nutrition-input {
+  width: 20%;
+}
+.fields .nutrition-validation {
+  width: 15%;
+}
+.fields .nutrition-deletion {
+  width: 15%;
+}
+
+.shadow {
+  opacity: 0.2;
+}
+
+.recap {
+  color: white;
+  list-style-type: none;
+  margin: 20px auto;
+  max-width: 500px;
+  text-align: left;
+  max-width: 300px;
+}
+
+.recap li {
+  padding-left: 20px;
+}
+.recap .title {
+  padding: 5px 10px;
+  font-size: 150%;
+}
+.toDelete {
+  background-color: red;
+}
+.toIgnore {
+  background-color: orange;
+}
+.toSend {
+  background-color: green;
+}
+
+.validate {
+  background-color: green;
+}
+
+.skip {
+  background-color: gray;
+}
+.button {
+  margin: 5px;
+}

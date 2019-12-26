@@ -2,44 +2,15 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ImageZoom from 'react-medium-image-zoom';
 
-import countries from './countries';
+import countries from '../common/countries';
 import insightTypes from './insightTypes';
 import './questions.css';
+import subDomain from '../common/subdomain';
 
 const NO_QUESTION_REMAINING = 'NO_QUESTION_REMAINING';
 
 const getRandomElement = array =>
   array[Math.floor(array.length * Math.random())];
-
-const subDomain = (() => {
-  const matches = /^https:\/\/((world|\w{2})(?:-(\w{2}))?)\.openfoodfacts\.org/.exec(
-    window.location.href,
-  );
-  if (!matches) {
-    return { subDomain: 'world', countryCode: 'world', languageCode: 'en' };
-  }
-
-  const countryCode = matches[2].toLowerCase();
-  if (matches[3]) {
-    return {
-      subDomain: matches[1],
-      countryCode: countryCode,
-      languageCode: matches[3],
-    };
-  }
-
-  const country = countries.find(
-    country =>
-      country.countryCode !== undefined &&
-      country.countryCode.toLowerCase() === countryCode,
-  );
-  const languageCode = country === undefined ? 'en' : country.languageCode;
-  return {
-    subDomain: matches[1],
-    countryCode: countryCode,
-    languageCode: languageCode,
-  };
-})();
 
 const Questions = () => {
   const [questions, setQuestions] = useState([]);
@@ -72,21 +43,27 @@ const Questions = () => {
     );
   };
 
-  const brands = new URL(window.location.href).searchParams.get('brands');
+  const urlSearchParams = new URL(window.location.href).searchParams;
+  const brands = urlSearchParams.get('brands');
+  const valueTag = urlSearchParams.get('value_tag');
 
   const loadQuestions = () => {
     setLoading(true);
     let questionsResults;
-    axios(
-      `https://robotoff.openfoodfacts.org/api/v1/questions/random?${
-        country === 'en:world' ? '' : `country=${country}`
-      }&lang=${subDomain.languageCode}&count=5${
-        brands ? `&brands=${brands}` : ''
-      }${
-        selectedInsights.length < Object.keys(insightTypes).length
-          ? `&insight_types=${getRandomElement(selectedInsights)}`
-          : ''
-      }`,
+
+    axios.get(
+      'https://robotoff.openfoodfacts.org/api/v1/questions/random',
+      {
+        params: {
+          lang: subDomain.languageCode,
+          count: 5,
+          insight_types: selectedInsights.join(','),
+          ...(country === 'en:world' ? {} : { country }),
+          ...(brands ? { brands } : {}),
+          ...(valueTag ? { value_tag: valueTag } : {}),
+          ...(selectedInsights.length < Object.keys(insightTypes).length ? { insight_types: getRandomElement(selectedInsights) } : {} ),
+        }
+      }
     )
       .then(({ data }) => {
         questionsResults = data.questions
@@ -135,6 +112,7 @@ const Questions = () => {
           questions[0].insight_id
         }&annotation=${annotation}&update=1`,
       ),
+      { withCredentials: true },
     ); // The status of the response is not displayed so no need to wait the response
     setQuestions(questions.filter((_, i) => i)); // remove first question
   };
