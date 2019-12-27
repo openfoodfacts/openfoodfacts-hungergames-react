@@ -43,13 +43,18 @@ const Questions = () => {
   const urlSearchParams = new URL(window.location.href).searchParams;
   const brands = urlSearchParams.get('brands');
   const valueTag = urlSearchParams.get('value_tag');
+  let orderBy = urlSearchParams.get('order_by');
+
+  if (orderBy !== 'random' && orderBy !== 'popular') {
+    orderBy = 'random';
+  }
 
   const loadQuestions = () => {
     setLoading(true);
     let questionsResults;
 
     axios.get(
-      'https://robotoff.openfoodfacts.org/api/v1/questions/random',
+      `https://robotoff.openfoodfacts.org/api/v1/questions/${orderBy}`,
       {
         params: {
           lang: subDomain.languageCode,
