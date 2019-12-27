@@ -9,6 +9,9 @@ import subDomain from '../common/subdomain';
 
 const NO_QUESTION_REMAINING = 'NO_QUESTION_REMAINING';
 
+const getRandomElement = array =>
+  array[Math.floor(array.length * Math.random())];
+
 const Questions = () => {
   const [questions, setQuestions] = useState([]);
   const [country, setCountry] = useState(
@@ -63,6 +66,7 @@ const Questions = () => {
           ...(country === 'en:world' ? {} : { country }),
           ...(brands ? { brands } : {}),
           ...(valueTag ? { value_tag: valueTag } : {}),
+          ...(selectedInsights.length < Object.keys(insightTypes).length ? { insight_types: getRandomElement(selectedInsights) } : {} ),
         }
       }
     )
