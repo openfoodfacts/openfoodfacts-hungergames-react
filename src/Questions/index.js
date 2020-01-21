@@ -212,6 +212,7 @@ const Questions = () => {
       <div className="selectQuestion">
         {Object.keys(insightTypes).map(insightType => (
           <button
+            key={insightType}
             className={
               selectedInsights.includes(insightType) ? 'selected' : 'unselected'
             }
