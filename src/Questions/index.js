@@ -49,13 +49,22 @@ const Questions = () => {
     orderBy = 'random';
   }
 
+  const robotoffAnnotate = (insightId, annotation) => {
+    return axios.post(
+      'https://robotoff.openfoodfacts.org/api/v1/insights/annotate',
+      new URLSearchParams(
+        `insight_id=${insightId}&annotation=${annotation}&update=1`,
+      ),
+      { withCredentials: true },
+    );
+  };
+
   const loadQuestions = () => {
     setLoading(true);
     let questionsResults;
 
-    axios.get(
-      `https://robotoff.openfoodfacts.org/api/v1/questions/${orderBy}`,
-      {
+    axios
+      .get(`https://robotoff.openfoodfacts.org/api/v1/questions/${orderBy}`, {
         params: {
           lang: subDomain.languageCode,
           count: 5,
@@ -63,9 +72,8 @@ const Questions = () => {
           ...(country === 'en:world' ? {} : { country }),
           ...(brands ? { brands } : {}),
           ...(valueTag ? { value_tag: valueTag } : {}),
-        }
-      }
-    )
+        },
+      })
       .then(({ data }) => {
         questionsResults = data.questions
           .filter(
@@ -74,47 +82,53 @@ const Questions = () => {
           )
           .map(q => ({
             ...q,
-            productLink: `https://${
-              subDomain.subDomain
-            }.openfoodfacts.org/product/${q.barcode}`,
+            productLink: `https://${subDomain.subDomain}.openfoodfacts.org/product/${q.barcode}`,
           }));
         return axios.all(
           questionsResults.map(q =>
             axios(
-              `https://${
-                subDomain.subDomain
-              }.openfoodfacts.org/api/v0/product/${
-                q.barcode
-              }.json?fields=product_name`,
+              `https://${subDomain.subDomain}.openfoodfacts.org/api/v0/product/${q.barcode}.json?fields=product_name`,
             ),
           ),
         );
       })
       .then(results => {
-        setQuestions(
-          questions.concat(
-            results.length
-              ? questionsResults.map((q, i) => ({
-                  ...q,
-                  productName: results[i].data.product.product_name,
-                }))
-              : NO_QUESTION_REMAINING,
-          ),
+        let result;
+        const missingProductInsightIds = [];
+        const questionsToAdd = [];
+
+        questionsResults.forEach((q, i) => {
+          result = results[i];
+          if (result.status === 200) {
+            if (result.data.status === 0) {
+              // missing product, add to insights to delete
+              missingProductInsightIds.push(q.insight_id);
+            } else {
+              questionsToAdd.push({
+                ...q,
+                productName: result.data.product.product_name,
+              });
+            }
+          }
+        });
+
+        // delete insight if product was not found
+        missingProductInsightIds.map(insightId =>
+          robotoffAnnotate(insightId, -1),
         );
+
+        if (questionsToAdd.length === 0) {
+          questionsToAdd.push(NO_QUESTION_REMAINING);
+        }
+
+        setQuestions(questions.concat(questionsToAdd));
       })
       .finally(() => setLoading(false));
   };
 
   const edit = annotation => {
-    axios.post(
-      'https://robotoff.openfoodfacts.org/api/v1/insights/annotate',
-      new URLSearchParams(
-        `insight_id=${
-          questions[0].insight_id
-        }&annotation=${annotation}&update=1`,
-      ),
-      { withCredentials: true },
-    ); // The status of the response is not displayed so no need to wait the response
+    robotoffAnnotate(questions[0].insight_id, annotation);
+    // The status of the response is not displayed so no need to wait the response
     setQuestions(questions.filter((_, i) => i)); // remove first question
   };
 
