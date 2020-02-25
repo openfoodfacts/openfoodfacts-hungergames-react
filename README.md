@@ -9,8 +9,8 @@
 - yarn install
 - yarn start
 
-To test the ingredients parts, add `?type=ingredients` to the url
-
+To test the ingredients part, add `?type=ingredients` to the url
+To test the nutrition part, add `?type=nutrition` to the url
 ## Libraries:
 
 - React
