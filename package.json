@@ -21,7 +21,7 @@
     "prettier": "^1.16.4",
     "pretty-quick": "^1.10.0",
     "react-medium-image-zoom": "^3.0.16",
-    "react-scripts": "2.1.8",
+    "react-scripts": "3.4.1",
     "webpack-cli": "^3.3.0"
   },
   "husky": {
